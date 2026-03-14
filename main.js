@@ -1,10 +1,11 @@
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
-const bookConfigs = {
+// מפת צבעים במידה ולא הוגדר בשיטס
+const fallbackColors = {
+    'Magical': '#a855f7',
+    'Legendary': '#f59e0b',
     'Epic': '#3b82f6',
-    'Legendary': '#8b5cf6',
-    'Magical': '#f43f5e',
-    'Think About It': '#06b6d4'
+    'Think About It': '#10b981'
 };
 
 async function init() {
@@ -16,7 +17,7 @@ async function init() {
         const books = organize(parsed);
         render(books, grid);
     } catch (e) {
-        grid.innerHTML = "טוען נתונים...";
+        console.error(e);
     }
 }
 
@@ -25,42 +26,43 @@ function parseCSV(csv) {
     return rows.map(r => {
         const c = r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         return { 
-            book: c[0]?.replace(/"/g,'').trim(), 
-            chapter: c[2]?.replace(/"/g,'').trim(), 
-            unit: c[3]?.replace(/"/g,'').trim(), 
-            link: c[4]?.replace(/"/g,'').trim() 
+            book: c[0]?.replace(/"/g,'').trim(),
+            grade: c[1]?.replace(/"/g,'').trim(),
+            chapter: c[2]?.replace(/"/g,'').trim(),
+            unit: c[3]?.replace(/"/g,'').trim(),
+            link: c[4]?.replace(/"/g,'').trim(),
+            color: c[5]?.replace(/"/g,'').trim() // עמודה F
         };
-    }).filter(i => i.book && i.unit);
+    }).filter(i => i.book);
 }
 
 function organize(data) {
     const obj = {};
     data.forEach(i => {
-        if(!obj[i.book]) obj[i.book] = {};
-        if(!obj[i.book][i.chapter]) obj[i.book][i.chapter] = [];
-        obj[i.book][i.chapter].push(i);
+        if(!obj[i.book]) obj[i.book] = { name: i.book, grade: i.grade, color: i.color, chaps: {} };
+        if(!obj[i.book].chaps[i.chapter]) obj[i.book].chaps[i.chapter] = [];
+        obj[i.book].chaps[i.chapter].push(i);
     });
     return obj;
 }
 
 function render(books, grid) {
     grid.innerHTML = '';
-    Object.entries(books).forEach(([name, chapters]) => {
-        const color = bookConfigs[name] || '#64748b';
+    Object.values(books).forEach(book => {
+        // המרת שמות צבעים של Tailwind לקוד HEX במידת הצורך, או שימוש בערך מהשיטס
+        const headerColor = book.color || fallbackColors[book.name] || '#64748b';
         
         let chaptersHTML = '';
-        Object.entries(chapters).forEach(([chapName, units]) => {
+        Object.entries(book.chaps).forEach(([chapName, units]) => {
             chaptersHTML += `
                 <div class="chapter-row">
                     <div class="chapter-btn" onclick="this.parentElement.classList.toggle('open')">
-                        <span class="chevron-icon">▼</span>
-                        <span class="font-bold text-slate-700">${chapName}</span>
+                        <span class="chevron">∨</span>
+                        <span class="chapter-title">${chapName}</span>
                     </div>
-                    <div class="units-container">
+                    <div class="units-list">
                         ${units.map(u => `
-                            <a href="${u.link}" target="_blank" class="unit-link">
-                                ${u.unit}
-                            </a>
+                            <a href="${u.link}" target="_blank" class="unit-link">${u.unit}</a>
                         `).join('')}
                     </div>
                 </div>
@@ -68,11 +70,12 @@ function render(books, grid) {
         });
 
         grid.innerHTML += `
-            <div class="book-card" style="border-top: 5px solid ${color}">
-                <div class="p-8 border-b border-slate-50 bg-white">
-                    <h3 class="text-xl font-extrabold text-slate-800">${name}</h3>
+            <div class="book-card">
+                <div class="book-header" style="background-color: ${headerColor}">
+                    <h3 class="text-white text-xl font-extrabold">${book.name}</h3>
+                    <span class="grade-badge">${book.grade}</span>
                 </div>
-                <div>${chaptersHTML}</div>
+                <div class="py-2">${chaptersHTML}</div>
             </div>
         `;
     });
