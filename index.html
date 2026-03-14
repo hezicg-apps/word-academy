@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | בחרו ספר לימוד</title>
+    <title>Word Academy | Explore</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
             padding: 1rem 4%;
             background: white;
             border-bottom: 1px solid #e2e8f0;
-            direction: ltr; /* מבטיח לוגו בשמאל */
+            direction: ltr;
         }
 
         .brand-text span.w { color: #38bdf8; }
@@ -27,12 +27,16 @@
 
         .wa-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2.5rem;
         }
         .wa-card:hover {
             transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
         }
 
-        .section-title { font-weight: 800; }
+        /* אנימציה עדינה לטעינה */
+        .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
 <body>
@@ -50,12 +54,15 @@
         </div>
     </header>
 
- <main class="max-w-6xl mx-auto py-12 px-6">
-    <h2 id="page-title" class="text-3xl font-black text-center text-slate-800 mb-12">בחרו ספר לימוד</h2>
-    <div id="books-grid" class="grid grid-cols-2 md:grid-cols-4 gap-8">
-        <p class="text-center col-span-full">מתחבר לשרת הספרים...</p>
-    </div>
-</main>
+    <main class="max-w-6xl mx-auto py-12 px-6">
+        <h2 id="page-title" class="text-3xl font-black text-center text-slate-800 mb-12">טוען את הספרייה...</h2>
+        
+        <div id="books-grid" class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="col-span-full text-center py-10">
+                <div class="loading-pulse text-slate-400 font-bold">מתחבר ל-Google Sheets...</div>
+            </div>
+        </div>
+    </main>
 
     <script src="main.js"></script>
 </body>
