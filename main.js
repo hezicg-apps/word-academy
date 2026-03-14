@@ -1,154 +1,110 @@
-// --- לוגיקה מרכזית: Word Adventure ---
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
-let words = [];
-let currentMode = 'cards';
-let currentIndex = 0;
-let score = 0;
+const bookSettings = {
+    'Epic': { color: '#5ba2d0', grade: "כיתה ג'" },
+    'Legendary': { color: '#652286', grade: "כיתה ד'" },
+    'Magical': { color: '#4e1522', grade: "כיתה ה'" },
+    'Think About It': { color: '#97dee4', grade: "כיתה ו'" }
+};
 
-// 1. טעינת נתונים מה-URL
-function loadFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    const data = params.get('w');
-    
-    if (data) {
-        try {
-            // פענוח Base64 בטוח שתומך בעברית (UTF-8)
-            const decodedData = decodeURIComponent(atob(data).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            
-            const lines = decodedData.split('\n');
-            const title = lines[0]; // השורה הראשונה היא כותרת היחידה
-            
-            words = lines.slice(1).filter(line => line.includes('-')).map(line => {
-                const [eng, heb] = line.split('-').map(s => s.trim());
-                return { eng, heb };
-            });
+let allData = [];
 
-            renderApp(title);
-        } catch (e) {
-            console.error("Error decoding data", e);
-            document.getElementById('app').innerHTML = "שגיאה בטעינת המילים.";
-        }
+async function loadData() {
+    const grid = document.getElementById('books-grid');
+    try {
+        console.log("Starting to fetch data...");
+        const response = await fetch(SHEET_URL);
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const csvText = await response.text();
+        console.log("Data received, parsing...");
+        
+        allData = parseCSV(csvText);
+        renderLibrary();
+    } catch (err) {
+        console.error("Error:", err);
+        grid.innerHTML = `<div class="col-span-full text-center text-red-500">
+            שגיאה בחיבור לנתונים. <br> 
+            <small>וודאו שהגיליון מפורסם כ-CSV ושהאינטרנט מחובר.</small>
+        </div>`;
     }
 }
 
-// 2. רינדור הממשק המרכזי
-function renderApp(title) {
-    const app = document.getElementById('app');
-    app.innerHTML = `
-        <div class="text-center mb-8 animate-fade-in">
-            <h1 class="text-3xl font-black text-blue-600 mb-2">${title}</h1>
-            <div class="flex gap-2 justify-center flex-wrap">
-                <button onclick="switchMode('cards')" class="px-4 py-2 bg-white border-2 border-blue-500 rounded-xl font-bold hover:bg-blue-50 transition">כרטיסיות 🗂️</button>
-                <button onclick="switchMode('quiz')" class="px-4 py-2 bg-white border-2 border-green-500 rounded-xl font-bold hover:bg-green-50 transition">מבחן 📝</button>
-                <button onclick="switchMode('match')" class="px-4 py-2 bg-white border-2 border-purple-500 rounded-xl font-bold hover:bg-purple-50 transition">התאמה 🧩</button>
-            </div>
-        </div>
-        <div id="game-container" class="w-full flex flex-col items-center"></div>
-    `;
-    switchMode('cards');
-}
-
-// 3. החלפת מצבי משחק
-function switchMode(mode) {
-    currentMode = mode;
-    const container = document.getElementById('game-container');
-    container.innerHTML = '';
+function parseCSV(csv) {
+    const lines = csv.split(/\r?\n/); // מטפל גם ברווחים של ווינדוס
+    const result = [];
     
-    if (mode === 'cards') renderCards();
-    else if (mode === 'quiz') startQuiz();
-    else if (mode === 'match') startMatch();
+    // מתחיל משורה 1 כדי לדלג על הכותרות
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i]) continue;
+        
+        // פיצול חכם שמתעלם מפסיקים בתוך גרשיים (חשוב לעברית)
+        const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        
+        if (cols.length >= 4) {
+            result.push({
+                book: cols[0]?.replace(/"/g, '').trim(),
+                grade: cols[1]?.replace(/"/g, '').trim(),
+                chapter: cols[2]?.replace(/"/g, '').trim(),
+                unitName: cols[3]?.replace(/"/g, '').trim(),
+                link: cols[4]?.replace(/"/g, '').trim()
+            });
+        }
+    }
+    return result;
 }
 
-// --- מצב כרטיסיות ---
-function renderCards() {
-    const container = document.getElementById('game-container');
-    const word = words[currentIndex];
+function renderLibrary() {
+    const grid = document.getElementById('books-grid');
+    const title = document.getElementById('page-title');
+    title.innerText = "בחרו ספר לימוד";
     
-    container.innerHTML = `
-        <div class="perspective-1000 w-80 h-96 cursor-pointer" onclick="this.classList.toggle('card-flipped')">
-            <div class="card-inner w-full h-full shadow-2xl rounded-[2rem]">
-                <div class="card-front bg-white text-4xl font-black text-blue-600 eng-text border-4 border-blue-200">${word.eng}</div>
-                <div class="card-back bg-blue-600 text-4xl font-bold text-white border-4 border-white">${word.heb}</div>
-            </div>
-        </div>
-        <div class="flex gap-8 mt-8 items-center">
-            <button onclick="prevCard()" class="text-4xl hover:scale-120 transition">➡️</button>
-            <span class="font-bold text-gray-500">${currentIndex + 1} / ${words.length}</span>
-            <button onclick="nextCard()" class="text-4xl hover:scale-120 transition">⬅️</button>
-        </div>
-    `;
-}
-
-function nextCard() {
-    currentIndex = (currentIndex + 1) % words.length;
-    renderCards();
-}
-
-function prevCard() {
-    currentIndex = (currentIndex - 1 + words.length) % words.length;
-    renderCards();
-}
-
-// --- מצב מבחן ---
-function startQuiz() {
-    score = 0;
-    currentIndex = 0;
-    showQuizQuestion();
-}
-
-function showQuizQuestion() {
-    const container = document.getElementById('game-container');
-    if (currentIndex >= words.length) {
-        container.innerHTML = `<div class="text-center"><h2 class="text-3xl font-bold mb-4">כל הכבוד! ✨</h2><p class="text-xl">סיימת את המבחן.</p><button onclick="switchMode('cards')" class="mt-6 px-6 py-3 bg-blue-500 text-white rounded-2xl font-bold">חזרה לכרטיסיות</button></div>`;
-        confetti();
+    const books = [...new Set(allData.map(item => item.book))];
+    
+    if (books.length === 0) {
+        grid.innerHTML = "<p class='col-span-full text-center'>לא נמצאו ספרים בגיליון.</p>";
         return;
     }
 
-    const word = words[currentIndex];
-    const options = [word.heb, ...words.filter(w => w.heb !== word.heb).sort(() => 0.5 - Math.random()).slice(0, 3).map(w => w.heb)].sort(() => 0.5 - Math.random());
-
-    container.innerHTML = `
-        <div class="w-full max-w-md bg-white p-8 rounded-[2.5rem] shadow-xl border-b-8 border-green-500 animate-fade-in">
-            <div class="text-center mb-6">
-                <span class="text-sm font-bold text-gray-400">שאלה ${currentIndex + 1} מתוך ${words.length}</span>
-                <h2 class="text-4xl font-black text-gray-800 mt-2 eng-text">${word.eng}</h2>
+    grid.innerHTML = books.map(name => {
+        const set = bookSettings[name] || { color: '#cbd5e1', grade: 'כללי' };
+        return `
+            <div onclick="showUnits('${name}')" 
+                 class="wa-card bg-white rounded-[2.5rem] p-8 text-center shadow-xl border-t-[12px] cursor-pointer hover:shadow-2xl" 
+                 style="border-color: ${set.color}">
+                <h3 class="text-2xl font-black text-slate-800">${name}</h3>
+                <p class="text-slate-400 font-bold mt-2">${set.grade}</p>
             </div>
-            <div class="grid grid-cols-1 gap-3">
-                ${options.map(opt => `
-                    <button onclick="checkAnswer('${opt}', '${word.heb}')" class="p-4 text-xl font-bold border-2 border-slate-100 rounded-2xl hover:bg-green-50 hover:border-green-500 transition-all text-right pr-6">${opt}</button>
-                `).join('')}
-            </div>
+        `;
+    }).join('') + `
+        <div class="wa-card bg-slate-50 rounded-[2.5rem] p-8 text-center shadow-inner border-2 border-dashed border-slate-200 cursor-pointer">
+            <h3 class="text-xl font-bold text-slate-500">הספר שלי לא נמצא</h3>
+            <p class="text-slate-400 mt-2">עזרו לי...</p>
         </div>
     `;
 }
 
-function checkAnswer(selected, correct) {
-    if (selected === correct) {
-        currentIndex++;
-        showQuizQuestion();
-    } else {
-        alert("נסה שוב! 💪");
-    }
+function showUnits(bookName) {
+    const grid = document.getElementById('books-grid');
+    const title = document.getElementById('page-title');
+    const units = allData.filter(i => i.book === bookName);
+    const color = bookSettings[bookName]?.color || '#334155';
+
+    title.innerHTML = `
+        <button onclick="renderLibrary()" class="text-sm bg-slate-200 hover:bg-slate-300 px-4 py-1 rounded-full mb-2 transition-colors">← חזרה לספרים</button>
+        <div class="mt-2">יחידות לימוד: ${bookName}</div>
+    `;
+
+    grid.innerHTML = units.map(u => `
+        <a href="${u.link}" target="_blank" class="no-underline">
+            <div class="wa-card bg-white rounded-3xl p-6 shadow-md border-r-8 hover:bg-blue-50 transition-all text-right" style="border-color: ${color}">
+                <p class="text-xs text-slate-400 font-bold">${u.chapter}</p>
+                <h4 class="text-lg font-black text-slate-800">${u.unitName}</h4>
+                <p class="text-blue-500 text-sm mt-2 font-bold italic">לחצו למשחק 🎮</p>
+            </div>
+        </a>
+    `).join('');
 }
 
-// --- מצב התאמה ---
-function startMatch() {
-    const container = document.getElementById('game-container');
-    // לוגיקת התאמה בסיסית (ניתן להרחבה)
-    container.innerHTML = `<div class="p-8 text-center bg-white rounded-3xl shadow-lg border-t-8 border-purple-500">
-        <h2 class="text-2xl font-bold mb-4">משחק ההתאמה בבנייה... 🛠️</h2>
-        <p>בינתיים אפשר לתרגל בכרטיסיות ובמבחן!</p>
-    </div>`;
-}
-
-// --- מצב לילה ---
-document.getElementById('toggleNight').addEventListener('click', () => {
-    document.body.classList.toggle('night-mode');
-    const btn = document.getElementById('toggleNight');
-    btn.innerText = document.body.classList.contains('night-mode') ? '🌙' : '☀️';
-});
-
-// הפעלה ראשונית
-loadFromUrl();
+// הפעלה מידית
+document.addEventListener('DOMContentLoaded', loadData);
