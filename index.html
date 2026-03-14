@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Academy | Explore Books</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* גוונים מדויקים מהלוגו שלך */
+            --logo-blue: #38bdf8;
+            --logo-purple: #a855f7;
+            --bg-light: #fdfdfd;
+            --card-shadow: rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            color: #1e293b;
+        }
+
+        /* Header עיצוב */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand img {
+            height: 40px;
+            width: auto;
+        }
+
+        .brand-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* צביעת האותיות לפי הבקשה שלך */
+        .brand-text span.w { color: var(--logo-blue); }
+        .brand-text span.a { color: var(--logo-purple); }
+
+        /* גריד הספרים */
+        .container {
+            max-width: 1100px;
+            margin: 3rem auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 6px var(--card-shadow);
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.08);
+            border-color: var(--logo-purple);
+        }
+
+        /* ייצוג ויזואלי לספר - אפשר להחליף בתמונות בעתיד */
+        .book-cover-placeholder {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .book-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 10px 0 5px 0;
+        }
+
+        .book-meta {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .btn-login {
+            background: #f1f5f9;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .books-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="brand">
+            <img src="Logo.svg" alt="Word Academy">
+            <div class="brand-text">
+                <span class="w">W</span>ord <span class="a">A</span>cademy
+            </div>
+        </a>
+        <a href="#" class="btn-login">כניסת מורים</a>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">בחר ספר לימוד להתחלה:</h2>
+        
+        <div class="books-grid">
+            <div class="book-card">
+                <div class="book-cover-placeholder">📘</div>
+                <div class="book-title">Our World</div>
+                <div class="book-meta">כיתה ה'</div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-cover-placeholder">📙</div>
+                <div class="book-title">Cool!</div>
+                <div class="book-meta">כיתה ד'</div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-cover-placeholder">📗</div>
+                <div class="book-title">Way to Go</div>
+                <div class="book-meta">כיתה ו'</div>
+            </div>
+
+            <div class="book-card" style="border-style: dashed; opacity: 0.6;">
+                <div class="book-cover-placeholder">➕</div>
+                <div class="book-title">ספר אחר?</div>
+                <div class="book-meta">בקשו מאיתנו</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
