@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | בחירת ספר לימוד</title>
+    <title>Word Academy | בחרו ספר לימוד</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,6 +11,11 @@
             --logo-purple: #a855f7; 
             --text-black: #1e293b;
             --bg-light: #ffffff;
+            /* צבעי הספרים שסיפקת */
+            --color-epic: #5ba2d0;
+            --color-legendary: #652286;
+            --color-magical: #4e1522;
+            --color-think: #97dee4;
         }
 
         body {
@@ -20,9 +25,9 @@
             color: var(--text-black);
         }
 
+        /* ניצחון על ה-RTL: מגדירים את ה-Header משמאל לימין */
         header {
             display: flex;
-            /* הכוח עובר לכאן: row גורם לצדדים להיקבע לפי סדר ה-HTML */
             flex-direction: row; 
             justify-content: space-between;
             align-items: center;
@@ -32,9 +37,9 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            direction: ltr; 
         }
 
-        /* צד שמאל: לוגו ושם */
         .header-left {
             display: flex;
             align-items: center;
@@ -52,17 +57,16 @@
             font-weight: 700;
             color: black;
             letter-spacing: -0.5px;
-            /* שימוש בפונט לועזי לשם המותג */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
         }
 
         .brand-text span.w { color: var(--logo-blue); }
         .brand-text span.a { color: var(--logo-purple); }
 
-        /* צד ימין: כפתורים */
         .header-right {
             display: flex;
             gap: 12px;
+            direction: rtl; /* מחזיר את הכפתורים לקריאה מימין לשמאל */
         }
 
         .btn {
@@ -72,21 +76,12 @@
             font-weight: 700;
             font-size: 0.95rem;
             color: white;
-            transition: transform 0.2s, opacity 0.2s;
+            transition: all 0.2s;
         }
 
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .btn-teacher {
-            background-color: var(--logo-blue);
-        }
-
-        .btn-student {
-            background-color: var(--logo-purple);
-        }
+        .btn-teacher { background-color: var(--logo-blue); }
+        .btn-student { background-color: var(--logo-purple); }
+        .btn:hover { opacity: 0.85; transform: translateY(-1px); }
 
         .container {
             max-width: 1100px;
@@ -99,7 +94,6 @@
             margin-bottom: 3rem;
             font-weight: 700;
             text-align: center;
-            color: var(--text-black);
         }
 
         .books-grid {
@@ -116,19 +110,18 @@
             border: 1px solid #f1f5f9;
             transition: all 0.3s ease;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
 
         .book-card:hover {
             transform: translateY(-10px);
-            border-color: var(--logo-blue);
             box-shadow: 0 20px 40px rgba(0,0,0,0.06);
         }
 
-        .book-icon {
-            font-size: 3.5rem;
+        /* אייקון ספר מעוצב */
+        .book-svg {
+            width: 70px;
+            height: 70px;
             margin-bottom: 20px;
-            display: block;
         }
 
         .book-title {
@@ -143,15 +136,9 @@
             margin-top: 8px;
         }
 
-        .add-book-card {
-            border: 2px dashed #e2e8f0;
-            background: #fbfcfd;
-        }
-
         @media (max-width: 768px) {
             header { padding: 1rem 5%; }
-            .brand-text { font-size: 1.2rem; }
-            .btn { padding: 8px 14px; font-size: 0.85rem; }
+            .brand-text { display: none; }
         }
     </style>
 </head>
@@ -175,32 +162,44 @@
         <h2 class="section-title">בחרו ספר לימוד</h2>
         
         <div class="books-grid">
-            <div class="book-card">
-                <span class="book-icon">📚</span>
+            <div class="book-card" style="border-bottom: 5px solid var(--color-epic);">
+                <svg class="book-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 19.5V5C4 3.89543 4.89543 3 6 3H20V17H6C4.89543 17 4 17.8954 4 19.5Z" stroke="#5ba2d0" stroke-width="2"/>
+                    <path d="M6 17H20V21H6C4.89543 21 4 20.1046 4 19V19C4 17.8954 4.89543 17 6 17Z" fill="#5ba2d0"/>
+                </svg>
                 <div class="book-title">Epic</div>
                 <div class="book-grade">כיתה ג'</div>
             </div>
 
-            <div class="book-card">
-                <span class="book-icon">🏆</span>
+            <div class="book-card" style="border-bottom: 5px solid var(--color-legendary);">
+                <svg class="book-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 19.5V5C4 3.89543 4.89543 3 6 3H20V17H6C4.89543 17 4 17.8954 4 19.5Z" stroke="#652286" stroke-width="2"/>
+                    <path d="M6 17H20V21H6C4.89543 21 4 20.1046 4 19V19C4 17.8954 4.89543 17 6 17Z" fill="#652286"/>
+                </svg>
                 <div class="book-title">Legendary</div>
                 <div class="book-grade">כיתה ד'</div>
             </div>
 
-            <div class="book-card">
-                <span class="book-icon">✨</span>
+            <div class="book-card" style="border-bottom: 5px solid var(--color-magical);">
+                <svg class="book-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 19.5V5C4 3.89543 4.89543 3 6 3H20V17H6C4.89543 17 4 17.8954 4 19.5Z" stroke="#4e1522" stroke-width="2"/>
+                    <path d="M6 17H20V21H6C4.89543 21 4 20.1046 4 19V19C4 17.8954 4.89543 17 6 17Z" fill="#4e1522"/>
+                </svg>
                 <div class="book-title">Magical</div>
                 <div class="book-grade">כיתה ה'</div>
             </div>
 
-            <div class="book-card">
-                <span class="book-icon">💡</span>
+            <div class="book-card" style="border-bottom: 5px solid var(--color-think);">
+                <svg class="book-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 19.5V5C4 3.89543 4.89543 3 6 3H20V17H6C4.89543 17 4 17.8954 4 19.5Z" stroke="#97dee4" stroke-width="2"/>
+                    <path d="M6 17H20V21H6C4.89543 21 4 20.1046 4 19V19C4 17.8954 4.89543 17 6 17Z" fill="#97dee4"/>
+                </svg>
                 <div class="book-title">Think About It</div>
                 <div class="book-grade">כיתה ו'</div>
             </div>
 
-            <div class="book-card add-book-card">
-                <span style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 10px;">+</span>
+            <div class="book-card" style="border: 2px dashed #e2e8f0;">
+                <div style="font-size: 3rem; color: #cbd5e1; margin-bottom: 10px;">+</div>
                 <div class="book-title" style="color: #64748b;">הוסיפו ספר משלכן/ם</div>
                 <div class="book-grade">או בקשו מאיתנו</div>
             </div>
