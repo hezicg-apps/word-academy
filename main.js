@@ -9,45 +9,26 @@ const bookSettings = {
 
 let allData = [];
 
-// פונקציית הטעינה
-async function loadData() {
+// טעינת הנתונים מהגוגל שיטס
+async function loadLibrary() {
     const grid = document.getElementById('books-grid');
-    const title = document.getElementById('page-title');
-    
     try {
         const response = await fetch(SHEET_URL);
-        if (!response.ok) throw new Error('לא מצליח למשוך נתונים מהגיליון');
-        
         const csvText = await response.text();
-        allData = parseCSV(csvText);
         
-        if (allData.length === 0) {
-            grid.innerHTML = "<p class='col-span-full text-center'>הגיליון ריק או לא תקין.</p>";
-        } else {
-            renderLibrary();
-        }
+        allData = parseCSV(csvText);
+        renderBooks();
     } catch (err) {
-        console.error(err);
-        grid.innerHTML = `
-            <div class="col-span-full text-center p-8 bg-red-50 rounded-3xl border-2 border-red-100">
-                <p class="text-red-600 font-bold">שגיאה בחיבור לנתונים</p>
-                <p class="text-sm text-red-400 mt-2">וודאו שהגיליון מפורסם כ-CSV באינטרנט.</p>
-            </div>
-        `;
+        grid.innerHTML = `<p class="col-span-full text-red-500">שגיאה בחיבור לנתונים. וודא שהגיליון מפורסם כ-CSV.</p>`;
     }
 }
 
-// מפרק CSV חסין לבעיות עברית/אנגלית
+// פירוק ה-CSV לאובייקטים
 function parseCSV(csv) {
     const lines = csv.split(/\r?\n/);
     const data = [];
-    
     for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        
-        // חלוקה לפי פסיקים שאינם בתוך גרשיים
         const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        
         if (cols.length >= 4) {
             data.push({
                 book: cols[0]?.replace(/"/g, '').trim(),
@@ -61,15 +42,16 @@ function parseCSV(csv) {
     return data;
 }
 
-function renderLibrary() {
+// הצגת הספרים בדף הבית
+function renderBooks() {
     const grid = document.getElementById('books-grid');
     const title = document.getElementById('page-title');
     title.innerText = "בחרו ספר לימוד";
-    
+
     const uniqueBooks = [...new Set(allData.map(item => item.book))];
-    
+
     grid.innerHTML = uniqueBooks.map(name => {
-        const config = bookSettings[name] || { color: '#cbd5e1', grade: 'ספר לימוד' };
+        const config = bookSettings[name] || { color: '#cbd5e1', grade: '' };
         return `
             <div onclick="showUnits('${name}')" 
                  class="wa-card bg-white p-8 text-center shadow-xl border-t-[12px] cursor-pointer" 
@@ -86,6 +68,7 @@ function renderLibrary() {
     `;
 }
 
+// הצגת היחידות של ספר שנבחר
 function showUnits(bookName) {
     const grid = document.getElementById('books-grid');
     const title = document.getElementById('page-title');
@@ -93,20 +76,20 @@ function showUnits(bookName) {
     const color = bookSettings[bookName]?.color || '#334155';
 
     title.innerHTML = `
-        <button onclick="renderLibrary()" class="text-sm bg-slate-200 hover:bg-slate-300 px-6 py-2 rounded-full mb-4 transition-all">← חזרה לספרים</button>
-        <div class="mt-2 text-4xl">${bookName}</div>
+        <button onclick="renderBooks()" class="text-sm bg-slate-200 hover:bg-slate-300 px-6 py-2 rounded-full mb-4 transition-all">← חזרה לספרים</button>
+        <div class="mt-2">${bookName}</div>
     `;
 
     grid.innerHTML = units.map(u => `
-        <a href="${u.link}" target="_blank" class="no-underline block h-full">
-            <div class="wa-card bg-white p-6 shadow-md border-r-8 hover:bg-blue-50 transition-all text-right h-full" style="border-color: ${color}">
+        <a href="${u.link}" target="_blank" class="no-underline">
+            <div class="wa-card bg-white p-6 shadow-md border-r-8 hover:bg-blue-50 transition-all text-right" style="border-color: ${color}">
                 <p class="text-xs text-slate-400 font-bold mb-1">${u.chapter}</p>
-                <h4 class="text-lg font-black text-slate-800 leading-tight">${u.unitName}</h4>
-                <p class="text-blue-500 text-sm mt-4 font-bold italic">לחצו למשחק 🎮</p>
+                <h4 class="text-lg font-black text-slate-800">${u.unitName}</h4>
+                <p class="text-blue-500 text-sm mt-3 font-bold italic">לחצו למשחק 🎮</p>
             </div>
         </a>
     `).join('');
 }
 
-// הפעלה
-document.addEventListener('DOMContentLoaded', loadData);
+// הפעלה כשהדף מוכן
+document.addEventListener('DOMContentLoaded', loadLibrary);
