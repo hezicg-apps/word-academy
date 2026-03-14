@@ -1,69 +1,76 @@
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
-// מפת צבעים במידה ולא הוגדר בשיטס
-const fallbackColors = {
-    'Magical': '#a855f7',
-    'Legendary': '#f59e0b',
-    'Epic': '#3b82f6',
-    'Think About It': '#10b981'
+// הגדרת צבעים למקרה שאין בשיטס (לפי הצילום מסך)
+const colorMap = {
+    'Magical': '#8b5cf6',   // סגול
+    'Legendary': '#f59e0b', // כתום
+    'Epic': '#3b82f6',      // כחול
+    'Think About It': '#10b981' // ירוק
 };
 
 async function init() {
-    const grid = document.getElementById('books-grid');
     try {
         const response = await fetch(SHEET_URL);
         const data = await response.text();
         const parsed = parseCSV(data);
-        const books = organize(parsed);
-        render(books, grid);
+        const organized = groupData(parsed);
+        render(organized);
     } catch (e) {
-        console.error(e);
+        console.error("טעינה נכשלה", e);
     }
 }
 
 function parseCSV(csv) {
-    const rows = csv.split(/\r?\n/).slice(1);
-    return rows.map(r => {
-        const c = r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        return { 
-            book: c[0]?.replace(/"/g,'').trim(),
-            grade: c[1]?.replace(/"/g,'').trim(),
-            chapter: c[2]?.replace(/"/g,'').trim(),
-            unit: c[3]?.replace(/"/g,'').trim(),
-            link: c[4]?.replace(/"/g,'').trim(),
-            color: c[5]?.replace(/"/g,'').trim() // עמודה F
+    const lines = csv.split(/\r?\n/).slice(1);
+    return lines.map(line => {
+        const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        return {
+            book: cols[0]?.replace(/"/g, '').trim(),
+            grade: cols[1]?.replace(/"/g, '').trim(),
+            chapter: cols[2]?.replace(/"/g, '').trim(),
+            unit: cols[3]?.replace(/"/g, '').trim(),
+            link: cols[4]?.replace(/"/g, '').trim(),
+            color: cols[5]?.replace(/"/g, '').trim()
         };
-    }).filter(i => i.book);
+    }).filter(row => row.book);
 }
 
-function organize(data) {
-    const obj = {};
-    data.forEach(i => {
-        if(!obj[i.book]) obj[i.book] = { name: i.book, grade: i.grade, color: i.color, chaps: {} };
-        if(!obj[i.book].chaps[i.chapter]) obj[i.book].chaps[i.chapter] = [];
-        obj[i.book].chaps[i.chapter].push(i);
+function groupData(data) {
+    const books = {};
+    data.forEach(row => {
+        if (!books[row.book]) {
+            books[row.book] = { 
+                name: row.book, 
+                grade: row.grade, 
+                color: row.color, 
+                chapters: {} 
+            };
+        }
+        if (!books[row.book].chapters[row.chapter]) {
+            books[row.book].chapters[row.chapter] = [];
+        }
+        books[row.book].chapters[row.chapter].push(row);
     });
-    return obj;
+    return books;
 }
 
-function render(books, grid) {
+function render(books) {
+    const grid = document.getElementById('books-grid');
     grid.innerHTML = '';
+
     Object.values(books).forEach(book => {
-        // המרת שמות צבעים של Tailwind לקוד HEX במידת הצורך, או שימוש בערך מהשיטס
-        const headerColor = book.color || fallbackColors[book.name] || '#64748b';
+        const bg = book.color || colorMap[book.name] || '#64748b';
         
         let chaptersHTML = '';
-        Object.entries(book.chaps).forEach(([chapName, units]) => {
+        Object.entries(book.chapters).forEach(([name, units]) => {
             chaptersHTML += `
                 <div class="chapter-row">
-                    <div class="chapter-btn" onclick="this.parentElement.classList.toggle('open')">
+                    <div class="chapter-btn" onclick="toggleChapter(this)">
+                        <span class="chapter-title">${name.toUpperCase()}</span>
                         <span class="chevron">∨</span>
-                        <span class="chapter-title">${chapName}</span>
                     </div>
                     <div class="units-list">
-                        ${units.map(u => `
-                            <a href="${u.link}" target="_blank" class="unit-link">${u.unit}</a>
-                        `).join('')}
+                        ${units.map(u => `<a href="${u.link}" target="_blank" class="unit-link">${u.unit}</a>`).join('')}
                     </div>
                 </div>
             `;
@@ -71,14 +78,28 @@ function render(books, grid) {
 
         grid.innerHTML += `
             <div class="book-card">
-                <div class="book-header" style="background-color: ${headerColor}">
-                    <h3 class="text-white text-xl font-extrabold">${book.name}</h3>
+                <div class="book-header" style="background-color: ${bg}">
+                    <h3 class="text-xl font-extrabold m-0">${book.name}</h3>
                     <span class="grade-badge">${book.grade}</span>
                 </div>
-                <div class="py-2">${chaptersHTML}</div>
+                <div>${chaptersHTML}</div>
             </div>
         `;
     });
+}
+
+// פונקציית הפתיחה/סגירה
+function toggleChapter(btn) {
+    const row = btn.parentElement;
+    const isOpen = row.classList.contains('is-open');
+    
+    // סגור את כל שאר הפרקים באותו ספר (אופציונלי - למראה נקי יותר)
+    const allRows = row.parentElement.querySelectorAll('.chapter-row');
+    allRows.forEach(r => r.classList.remove('is-open'));
+
+    if (!isOpen) {
+        row.classList.add('is-open');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', init);
