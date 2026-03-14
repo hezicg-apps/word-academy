@@ -7,106 +7,114 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Assistant', sans-serif; background-color: #f0f4f8; color: #1e293b; margin: 0; }
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; }
         
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 5%;
-            background: transparent;
-            direction: ltr;
+        /* Header & Titles */
+        header { padding: 2rem 5%; background: transparent; direction: ltr; }
+        .brand-section { display: flex; align-items: center; gap: 15px; }
+        .brand-title { font-size: 2.5rem; font-weight: 800; color: #facc15; margin: 0; }
+        .sub-title { font-size: 1.1rem; color: #64748b; font-weight: 600; margin-top: -5px; display: flex; align-items: center; gap: 5px; }
+
+        /* Grid Layout */
+        .books-container { 
+            display: grid; 
+            grid-template-cols: repeat(1, 1fr); 
+            gap: 2rem; 
+            padding: 0 5% 5rem;
+        }
+        @media (min-width: 1024px) {
+            .books-container { grid-template-cols: repeat(3, 1fr); } /* 3 טורים במחשב */
         }
 
-        .brand-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .brand-title { font-size: 1.8rem; font-weight: 800; color: #facc15; }
-
-        /* כרטיסיית הספר - העיצוב מהתמונה */
+        /* Card Design */
         .book-card {
             background: white;
             border-radius: 2.5rem;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(255,255,255,0.8);
+            height: fit-content;
         }
 
         .book-header {
-            padding: 1.5rem 2rem;
+            padding: 1.25rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 2.5rem 2.5rem 0 0;
-        }
-
-        .grade-badge {
-            background: rgba(255, 255, 255, 0.2);
             color: white;
+        }
+        .grade-badge {
+            background: rgba(255, 255, 255, 0.25);
             padding: 4px 12px;
             border-radius: 12px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 800;
         }
 
-        /* Dropdown פרקים */
+        /* Dropdown/Accordion Logic */
         .chapter-row { border-bottom: 1px solid #f1f5f9; }
         .chapter-btn {
             width: 100%;
             padding: 1.25rem 2rem;
             display: flex;
-            flex-direction: row-reverse; /* חץ מימין, טקסט משמאל */
-            justify-content: space-between;
+            justify-content: space-between; /* טקסט בשמאל, חץ בימין */
             align-items: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.2s;
+            direction: ltr; /* יישור לשמאל */
         }
-        .chapter-btn:hover { background: #fafafa; }
-        
-        .chapter-title { font-weight: 800; font-size: 0.95rem; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        .chapter-btn:hover { background: #fcfcfc; }
+        .chapter-title { font-weight: 800; font-size: 0.9rem; color: #475569; letter-spacing: 0.5px; }
         
         .chevron { 
             transition: transform 0.3s; 
             font-size: 0.8rem; 
             color: #cbd5e1;
         }
-        .open .chevron { transform: rotate(180deg); }
-        .open .chapter-btn { background: #f8fafc; }
+
+        /* State: Open */
+        .chapter-row.is-open .chevron { transform: rotate(180deg); }
+        .chapter-row.is-open .units-list { max-height: 1000px; padding-bottom: 1rem; }
 
         .units-list {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s ease-in-out;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             background: #fff;
+            direction: ltr; /* יחידות מיושרות לשמאל */
         }
-        .open .units-list { max-height: 500px; padding-bottom: 1rem; }
 
         .unit-link {
             display: block;
-            padding: 0.75rem 3rem;
+            padding: 0.7rem 2.5rem;
             font-size: 0.9rem;
-            color: #64748b;
+            color: #94a3b8;
             text-decoration: none;
             transition: all 0.2s;
-            text-align: right;
         }
-        .unit-link:hover { color: #0f172a; background: #f1f5f9; padding-right: 3.5rem; }
+        .unit-link:hover { color: #0f172a; background: #f8fafc; padding-left: 3rem; }
 
+        .nav-buttons { direction: rtl; display: flex; gap: 1rem; }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="index.html" class="brand-logo">
-            <img src="Logo.svg" alt="WA" class="h-12">
-            <span class="brand-title">Word Adventure</span>
-        </a>
+    <header class="flex justify-between items-start">
+        <div class="brand-section">
+            <img src="Logo.svg" alt="WA" class="h-16">
+            <div>
+                <h1 class="brand-title">Word Academy</h1>
+                <div class="sub-title">🦉 תרגול אוצר מילים בכיף</div>
+            </div>
+        </div>
+        
+        <div class="nav-buttons mt-4">
+            <button class="text-slate-500 font-bold hover:text-slate-800 transition">כניסת מורים</button>
+            <button class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:scale-105 transition">כניסת תלמידים</button>
+        </div>
     </header>
 
-    <main class="max-w-7xl mx-auto py-12 px-8">
-        <div id="books-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-10">
-            </div>
-    </main>
+    <main class="books-container" id="books-grid">
+        </main>
 
     <script src="main.js"></script>
 </body>
