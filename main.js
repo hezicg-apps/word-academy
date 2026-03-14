@@ -7,18 +7,22 @@ const bookSettings = {
     'Think About It': { color: '#97dee4', grade: "כיתה ו'" }
 };
 
-async function initLibrary() {
+async function loadData() {
+    // בדיקה שהאלמנט קיים לפני שמתחילים
+    const grid = document.getElementById('books-grid');
+    if (!grid) {
+        console.error("CRITICAL ERROR: Element #books-grid not found in HTML!");
+        return;
+    }
+
     try {
         const response = await fetch(SHEET_URL);
         const csvText = await response.text();
         const rawData = parseCSV(csvText);
-        
-        // סידור הנתונים למבנה מקונן: ספר -> פרק -> יחידות
         const structuredData = organizeData(rawData);
-        renderLibrary(structuredData);
+        renderLibrary(structuredData, grid);
     } catch (err) {
-        console.error(err);
-        document.getElementById('books-container').innerHTML = "שגיאה בטעינת הנתונים.";
+        grid.innerHTML = `<p class="col-span-full text-center text-red-500">שגיאה בטעינת המידע מהשיטס.</p>`;
     }
 }
 
@@ -40,11 +44,7 @@ function organizeData(data) {
     const books = {};
     data.forEach(item => {
         if (!books[item.book]) {
-            books[item.book] = { 
-                name: item.book, 
-                grade: item.grade, 
-                chapters: {} 
-            };
+            books[item.book] = { name: item.book, grade: item.grade, chapters: {} };
         }
         if (!books[item.book].chapters[item.chapter]) {
             books[item.book].chapters[item.chapter] = [];
@@ -54,9 +54,8 @@ function organizeData(data) {
     return books;
 }
 
-function renderLibrary(books) {
-    const container = document.getElementById('books-container');
-    container.innerHTML = '';
+function renderLibrary(books, grid) {
+    grid.innerHTML = '';
 
     Object.values(books).forEach(book => {
         const config = bookSettings[book.name] || { color: '#cbd5e1' };
@@ -64,15 +63,15 @@ function renderLibrary(books) {
         let chaptersHTML = '';
         Object.entries(book.chapters).forEach(([chapterName, units]) => {
             chaptersHTML += `
-                <div class="border-b border-slate-100 last:border-0">
-                    <div class="chapter-header p-4 flex justify-between items-center font-bold text-slate-700" onclick="toggleChapter(this)">
-                        <span>${chapterName}</span>
-                        <span class="chevron text-xs">▼</span>
+                <div class="chapter-section">
+                    <div class="chapter-header" onclick="this.parentElement.classList.toggle('open')">
+                        <span class="text-slate-700">${chapterName}</span>
+                        <span class="chevron text-slate-400">▼</span>
                     </div>
-                    <div class="units-content bg-slate-50">
+                    <div class="units-list">
                         ${units.map(u => `
-                            <a href="${u.link}" target="_blank" class="block p-3 px-6 text-sm text-blue-600 hover:bg-blue-100 border-t border-white no-underline">
-                                🎮 ${u.unitName}
+                            <a href="${u.link}" target="_blank" class="block p-3 px-6 text-sm text-blue-600 hover:bg-blue-50 no-underline border-t border-white">
+                                📖 ${u.unitName}
                             </a>
                         `).join('')}
                     </div>
@@ -80,9 +79,9 @@ function renderLibrary(books) {
             `;
         });
 
-        container.innerHTML += `
+        grid.innerHTML += `
             <div class="book-card" style="border-color: ${config.color}">
-                <div class="p-6 text-center border-b border-slate-100 bg-white">
+                <div class="p-6 text-center bg-white border-b border-slate-100">
                     <h3 class="text-2xl font-black text-slate-800">${book.name}</h3>
                     <p class="text-slate-400 font-bold text-sm">${book.grade}</p>
                 </div>
@@ -94,10 +93,5 @@ function renderLibrary(books) {
     });
 }
 
-// פונקציית העזר לפתיחת/סגירת פרק
-function toggleChapter(element) {
-    const parent = element.parentElement;
-    parent.classList.toggle('chapter-open');
-}
-
-document.addEventListener('DOMContentLoaded', initLibrary);
+// הפעלה בטוחה: רק אחרי שה-HTML נטען לגמרי
+document.addEventListener('DOMContentLoaded', loadData);
