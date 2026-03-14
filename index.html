@@ -3,35 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | Explore</title>
+    <title>Word Academy | Books Library</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
+        body { font-family: 'Assistant', sans-serif; background-color: #f0f4f8; margin: 0; }
         
         header {
             display: flex;
-            flex-direction: row; 
             justify-content: space-between;
             align-items: center;
             padding: 1rem 4%;
             background: white;
             border-bottom: 1px solid #e2e8f0;
-            direction: ltr; /* לוגו משמאל, כפתורים מימין */
+            direction: ltr;
         }
 
         .brand-text span.w { color: #38bdf8; }
         .brand-text span.a { color: #a855f7; }
 
-        .wa-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* כרטיסיית ספר בסגנון WA-WEBSITE */
+        .book-card {
+            background: white;
             border-radius: 2.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-top-width: 12px;
         }
-        .wa-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+
+        /* עיצוב ה-Dropdown */
+        .chapter-header {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chapter-header:hover { background-color: #f8fafc; }
+        
+        .units-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .chapter-open .units-content {
+            max-height: 500px; /* גובה מקסימלי לפתיחה */
+        }
+        
+        .chevron {
+            transition: transform 0.3s;
+        }
+        .chapter-open .chevron {
+            transform: rotate(180deg);
         }
     </style>
 </head>
@@ -39,7 +62,7 @@
 
     <header>
         <a href="index.html" class="flex items-center gap-3 no-underline">
-            <img src="Logo.svg" alt="WA" class="h-10" id="logo-img">
+            <img src="Logo.svg" alt="WA" class="h-10">
             <div class="brand-text text-2xl font-black text-black font-sans">
                 <span class="w">W</span>ord <span class="a">A</span>cademy
             </div>
@@ -50,11 +73,11 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto py-12 px-6 text-center">
-        <h2 id="page-title" class="text-4xl font-black text-slate-800 mb-12">הספרייה שלנו</h2>
+    <main class="max-w-7xl mx-auto py-12 px-6">
+        <h2 class="text-4xl font-black text-center text-slate-800 mb-16">ספריית המילים שלי</h2>
         
-        <div id="books-grid" class="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="col-span-full py-20 text-slate-400 font-bold">טוען נתונים מהגיליון...</div>
+        <div id="books-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="col-span-full text-center py-20 text-slate-400 font-bold">טוען נתונים מהגיליון...</div>
         </div>
     </main>
 
