@@ -19,7 +19,7 @@
             padding: 1rem 4%;
             background: white;
             border-bottom: 1px solid #e2e8f0;
-            direction: ltr;
+            direction: ltr; /* לוגו משמאל, כפתורים מימין */
         }
 
         .brand-text span.w { color: #38bdf8; }
@@ -33,17 +33,13 @@
             transform: translateY(-8px);
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
         }
-
-        /* אנימציה עדינה לטעינה */
-        .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
 <body>
 
     <header>
         <a href="index.html" class="flex items-center gap-3 no-underline">
-            <img src="Logo.svg" alt="WA" class="h-10">
+            <img src="Logo.svg" alt="WA" class="h-10" id="logo-img">
             <div class="brand-text text-2xl font-black text-black font-sans">
                 <span class="w">W</span>ord <span class="a">A</span>cademy
             </div>
@@ -54,13 +50,11 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto py-12 px-6">
-        <h2 id="page-title" class="text-3xl font-black text-center text-slate-800 mb-12">טוען את הספרייה...</h2>
+    <main class="max-w-6xl mx-auto py-12 px-6 text-center">
+        <h2 id="page-title" class="text-4xl font-black text-slate-800 mb-12">הספרייה שלנו</h2>
         
         <div id="books-grid" class="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="col-span-full text-center py-10">
-                <div class="loading-pulse text-slate-400 font-bold">מתחבר ל-Google Sheets...</div>
-            </div>
+            <div class="col-span-full py-20 text-slate-400 font-bold">טוען נתונים מהגיליון...</div>
         </div>
     </main>
 
