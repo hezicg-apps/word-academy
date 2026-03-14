@@ -3,208 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | בחרו ספר לימוד</title>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Word Academy | Explore Books</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --logo-blue: #38bdf8;   
-            --logo-purple: #a855f7; 
-            --text-black: #1e293b;
-            --bg-light: #ffffff;
-            /* צבעי הספרים שסיפקת */
-            --color-epic: #5ba2d0;
-            --color-legendary: #652286;
-            --color-magical: #4e1522;
-            --color-think: #97dee4;
-        }
-
-        body {
-            font-family: 'Assistant', sans-serif;
-            background-color: var(--bg-light);
-            margin: 0;
-            color: var(--text-black);
-        }
-
-        /* ניצחון על ה-RTL: מגדירים את ה-Header משמאל לימין */
-        header {
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; }
+        
+        /* עיצוב ה-Header המדויק שביקשת */
+        .custom-header {
             display: flex;
-            flex-direction: row; 
+            flex-direction: row;
             justify-content: space-between;
             align-items: center;
             padding: 1rem 4%;
             background: white;
-            border-bottom: 1px solid #f1f5f9;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            direction: ltr; 
+            border-bottom: 1px solid #e2e8f0;
+            direction: ltr; /* לוגו משמאל */
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
+        .brand-text span.w { color: #38bdf8; }
+        .brand-text span.a { color: #a855f7; }
 
-        .header-left img {
-            height: 40px;
-            width: auto;
-        }
-
-        .brand-text {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: black;
-            letter-spacing: -0.5px;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .brand-text span.w { color: var(--logo-blue); }
-        .brand-text span.a { color: var(--logo-purple); }
-
-        .header-right {
-            display: flex;
-            gap: 12px;
-            direction: rtl; /* מחזיר את הכפתורים לקריאה מימין לשמאל */
-        }
-
-        .btn {
-            padding: 10px 22px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: white;
-            transition: all 0.2s;
-        }
-
-        .btn-teacher { background-color: var(--logo-blue); }
-        .btn-student { background-color: var(--logo-purple); }
-        .btn:hover { opacity: 0.85; transform: translateY(-1px); }
-
-        .container {
-            max-width: 1100px;
-            margin: 4rem auto;
-            padding: 0 20px;
-        }
-
-        .section-title {
-            font-size: 2.2rem;
-            margin-bottom: 3rem;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .books-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 30px;
-        }
-
-        .book-card {
-            background: white;
-            border-radius: 24px;
-            padding: 30px;
-            text-align: center;
-            border: 1px solid #f1f5f9;
-            transition: all 0.3s ease;
+        /* כרטיסיית ספר בסגנון WA-WEBSITE */
+        .wa-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
         }
-
-        .book-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-        }
-
-        /* אייקון ספר מעוצב */
-        .book-svg {
-            width: 70px;
-            height: 70px;
-            margin-bottom: 20px;
-        }
-
-        .book-title {
-            font-weight: 700;
-            font-size: 1.3rem;
-            margin: 0;
-        }
-
-        .book-grade {
-            font-size: 1rem;
-            color: #64748b;
-            margin-top: 8px;
-        }
-
-        @media (max-width: 768px) {
-            header { padding: 1rem 5%; }
-            .brand-text { display: none; }
+        .wa-card:hover {
+            transform: translateY(-10px) scale(1.02);
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="#" class="header-left">
-            <img src="Logo.svg" alt="Word Academy">
-            <div class="brand-text">
+    <header class="custom-header">
+        <a href="#" class="flex items-center gap-3 no-underline">
+            <img src="Logo.svg" alt="WA" class="h-10">
+            <div class="brand-text text-2xl font-extrabold text-black font-sans">
                 <span class="w">W</span>ord <span class="a">A</span>cademy
             </div>
         </a>
-
-        <div class="header-right">
-            <a href="#" class="btn btn-teacher">כניסת מורים</a>
-            <a href="#" class="btn btn-student">כניסת תלמידים</a>
+        <div class="flex gap-3" style="direction: rtl;">
+            <a href="#" class="bg-[#38bdf8] text-white px-5 py-2 rounded-full font-bold shadow-md">כניסת מורים</a>
+            <a href="#" class="bg-[#a855f7] text-white px-5 py-2 rounded-full font-bold shadow-md">כניסת תלמידים</a>
         </div>
     </header>
 
-    <div class="container">
-        <h2 class="section-title">בחרו ספר לימוד</h2>
+    <main class="max-w-6xl mx-auto py-16 px-6">
+        <h2 class="text-4xl font-black text-center text-slate-800 mb-16">בחרו ספר לימוד</h2>
         
-        <div class="books-grid">
-            <div class="book-card" style="border-bottom: 5px solid var(--color-epic);">
-                <svg class="book-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 19.5V5C4 3.89543 4.89543 3 6 3H20V17H6C4.89543 17 4 17.8954 4 19.5Z" stroke="#5ba2d0" stroke-width="2"/>
-                    <path d="M6 17H20V21H6C4.89543 21 4 20.1046 4 19V19C4 17.8954 4.89543 17 6 17Z" fill="#5ba2d0"/>
-                </svg>
-                <div class="book-title">Epic</div>
-                <div class="book-grade">כיתה ג'</div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            
+            <div class="wa-card bg-white rounded-[2.5rem] p-8 text-center shadow-xl border-t-[12px] border-[#5ba2d0]">
+                <h3 class="text-2xl font-black text-slate-800">Epic</h3>
+                <p class="text-slate-400 font-bold mt-2">כיתה ג'</p>
             </div>
 
-            <div class="book-card" style="border-bottom: 5px solid var(--color-legendary);">
-                <svg class="book-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 19.5V5C4 3.89543 4.89543 3 6 3H20V17H6C4.89543 17 4 17.8954 4 19.5Z" stroke="#652286" stroke-width="2"/>
-                    <path d="M6 17H20V21H6C4.89543 21 4 20.1046 4 19V19C4 17.8954 4.89543 17 6 17Z" fill="#652286"/>
-                </svg>
-                <div class="book-title">Legendary</div>
-                <div class="book-grade">כיתה ד'</div>
+            <div class="wa-card bg-white rounded-[2.5rem] p-8 text-center shadow-xl border-t-[12px] border-[#652286]">
+                <h3 class="text-2xl font-black text-slate-800">Legendary</h3>
+                <p class="text-slate-400 font-bold mt-2">כיתה ד'</p>
             </div>
 
-            <div class="book-card" style="border-bottom: 5px solid var(--color-magical);">
-                <svg class="book-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 19.5V5C4 3.89543 4.89543 3 6 3H20V17H6C4.89543 17 4 17.8954 4 19.5Z" stroke="#4e1522" stroke-width="2"/>
-                    <path d="M6 17H20V21H6C4.89543 21 4 20.1046 4 19V19C4 17.8954 4.89543 17 6 17Z" fill="#4e1522"/>
-                </svg>
-                <div class="book-title">Magical</div>
-                <div class="book-grade">כיתה ה'</div>
+            <div class="wa-card bg-white rounded-[2.5rem] p-8 text-center shadow-xl border-t-[12px] border-[#4e1522]">
+                <h3 class="text-2xl font-black text-slate-800">Magical</h3>
+                <p class="text-slate-400 font-bold mt-2">כיתה ה'</p>
             </div>
 
-            <div class="book-card" style="border-bottom: 5px solid var(--color-think);">
-                <svg class="book-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 19.5V5C4 3.89543 4.89543 3 6 3H20V17H6C4.89543 17 4 17.8954 4 19.5Z" stroke="#97dee4" stroke-width="2"/>
-                    <path d="M6 17H20V21H6C4.89543 21 4 20.1046 4 19V19C4 17.8954 4.89543 17 6 17Z" fill="#97dee4"/>
-                </svg>
-                <div class="book-title">Think About It</div>
-                <div class="book-grade">כיתה ו'</div>
+            <div class="wa-card bg-white rounded-[2.5rem] p-8 text-center shadow-xl border-t-[12px] border-[#97dee4]">
+                <h3 class="text-2xl font-black text-slate-800 leading-tight">Think<br>About It</h3>
+                <p class="text-slate-400 font-bold mt-2">כיתה ו'</p>
             </div>
 
-            <div class="book-card" style="border: 2px dashed #e2e8f0;">
-                <div style="font-size: 3rem; color: #cbd5e1; margin-bottom: 10px;">+</div>
-                <div class="book-title" style="color: #64748b;">הוסיפו ספר משלכן/ם</div>
-                <div class="book-grade">או בקשו מאיתנו</div>
+            <div class="wa-card bg-slate-50 rounded-[2.5rem] p-8 text-center shadow-inner border-2 border-dashed border-slate-200">
+                <h3 class="text-xl font-bold text-slate-500">הספר שלי לא נמצא</h3>
+                <p class="text-slate-400 mt-2">עזרו לי...</p>
             </div>
+
         </div>
-    </div>
+    </main>
 
 </body>
 </html>
