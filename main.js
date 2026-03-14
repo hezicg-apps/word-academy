@@ -1,74 +1,65 @@
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
-const bookSettings = {
-    'Epic': { color: '#5ba2d0', grade: "כיתה ג'" },
-    'Legendary': { color: '#652286', grade: "כיתה ד'" },
-    'Magical': { color: '#4e1522', grade: "כיתה ה'" },
-    'Think About It': { color: '#97dee4', grade: "כיתה ו'" }
+const bookConfigs = {
+    'Epic': '#3b82f6',
+    'Legendary': '#8b5cf6',
+    'Magical': '#f43f5e',
+    'Think About It': '#06b6d4'
 };
 
-async function initLibrary() {
-    const container = document.getElementById('books-grid'); // וודא שה-ID תואם ל-HTML
+async function init() {
+    const grid = document.getElementById('books-grid');
     try {
         const response = await fetch(SHEET_URL);
-        const csvText = await response.text();
-        const rawData = parseCSV(csvText);
-        const structuredData = organizeData(rawData);
-        renderLibrary(structuredData, container);
-    } catch (err) {
-        if (container) container.innerHTML = "שגיאה בטעינת הנתונים.";
+        const data = await response.text();
+        const parsed = parseCSV(data);
+        const books = organize(parsed);
+        render(books, grid);
+    } catch (e) {
+        grid.innerHTML = "טוען נתונים...";
     }
 }
 
 function parseCSV(csv) {
-    const lines = csv.split(/\r?\n/);
-    return lines.slice(1).map(line => {
-        const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        return {
-            book: cols[0]?.replace(/"/g, '').trim(),
-            grade: cols[1]?.replace(/"/g, '').trim(),
-            chapter: cols[2]?.replace(/"/g, '').trim(),
-            unitName: cols[3]?.replace(/"/g, '').trim(),
-            link: cols[4]?.replace(/"/g, '').trim()
+    const rows = csv.split(/\r?\n/).slice(1);
+    return rows.map(r => {
+        const c = r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        return { 
+            book: c[0]?.replace(/"/g,'').trim(), 
+            chapter: c[2]?.replace(/"/g,'').trim(), 
+            unit: c[3]?.replace(/"/g,'').trim(), 
+            link: c[4]?.replace(/"/g,'').trim() 
         };
-    }).filter(i => i.book && i.unitName);
+    }).filter(i => i.book && i.unit);
 }
 
-function organizeData(data) {
-    const books = {};
-    data.forEach(item => {
-        if (!books[item.book]) {
-            books[item.book] = { name: item.book, grade: item.grade, chapters: {} };
-        }
-        if (!books[item.book].chapters[item.chapter]) {
-            books[item.book].chapters[item.chapter] = [];
-        }
-        books[item.book].chapters[item.chapter].push(item);
+function organize(data) {
+    const obj = {};
+    data.forEach(i => {
+        if(!obj[i.book]) obj[i.book] = {};
+        if(!obj[i.book][i.chapter]) obj[i.book][i.chapter] = [];
+        obj[i.book][i.chapter].push(i);
     });
-    return books;
+    return obj;
 }
 
-function renderLibrary(books, container) {
-    if (!container) return;
-    container.innerHTML = '';
-
-    Object.values(books).forEach(book => {
-        const config = bookSettings[book.name] || { color: '#cbd5e1' };
+function render(books, grid) {
+    grid.innerHTML = '';
+    Object.entries(books).forEach(([name, chapters]) => {
+        const color = bookConfigs[name] || '#64748b';
         
         let chaptersHTML = '';
-        Object.entries(book.chapters).forEach(([chapterName, units]) => {
-            // כאן השינוי: הכותרת היא div עם onclick, לא קישור <a>
+        Object.entries(chapters).forEach(([chapName, units]) => {
             chaptersHTML += `
-                <div class="chapter-wrapper border-b border-slate-100 last:border-0">
-                    <div class="chapter-header p-4 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors" 
-                         onclick="this.parentElement.classList.toggle('open')">
-                        <span class="font-bold text-slate-700">${chapterName}</span>
-                        <span class="chevron text-[0.6rem] text-slate-400 transition-transform duration-300">▼</span>
+                <div class="chapter-row">
+                    <div class="chapter-btn" onclick="this.parentElement.classList.toggle('open')">
+                        <span class="chevron-icon">▼</span>
+                        <span class="font-bold text-slate-700">${chapName}</span>
                     </div>
-                    <div class="units-list max-height-0 overflow-hidden transition-all duration-300 bg-slate-50">
+                    <div class="units-container">
                         ${units.map(u => `
-                            <a href="${u.link}" target="_blank" class="block p-3 px-8 text-sm text-blue-600 hover:bg-blue-100 no-underline border-t border-white">
-                                🎮 ${u.unitName}
+                            <a href="${u.link}" target="_blank" class="unit-link">
+                                ${u.unit}
                             </a>
                         `).join('')}
                     </div>
@@ -76,27 +67,15 @@ function renderLibrary(books, container) {
             `;
         });
 
-        container.innerHTML += `
-            <div class="book-card bg-white rounded-[2.5rem] shadow-xl overflow-hidden border-t-[12px]" style="border-color: ${config.color}">
-                <div class="p-6 text-center border-b border-slate-100">
-                    <h3 class="text-2xl font-black text-slate-800">${book.name}</h3>
-                    <p class="text-slate-400 font-bold text-sm">${book.grade}</p>
+        grid.innerHTML += `
+            <div class="book-card" style="border-top: 5px solid ${color}">
+                <div class="p-8 border-b border-slate-50 bg-white">
+                    <h3 class="text-xl font-extrabold text-slate-800">${name}</h3>
                 </div>
-                <div>
-                    ${chaptersHTML}
-                </div>
+                <div>${chaptersHTML}</div>
             </div>
         `;
     });
 }
 
-// הוספת ה-CSS הנדרש לאפקט הפתיחה דרך ה-JS כדי לחסוך לך עריכת קבצים
-const style = document.createElement('style');
-style.innerHTML = `
-    .units-list { max-height: 0; }
-    .chapter-wrapper.open .units-list { max-height: 500px; }
-    .chapter-wrapper.open .chevron { transform: rotate(180deg); }
-`;
-document.head.appendChild(style);
-
-document.addEventListener('DOMContentLoaded', initLibrary);
+document.addEventListener('DOMContentLoaded', init);
