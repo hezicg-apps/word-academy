@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | הספרים שלנו</title>
+    <title>Word Academy | בחירת ספר לימוד</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --logo-blue: #38bdf8;   /* כחול לוגו */
-            --logo-purple: #a855f7; /* סגול לוגו */
+            --logo-blue: #38bdf8;   /* כחול הלוגו */
+            --logo-purple: #a855f7; /* סגול הלוגו */
             --text-black: #1e293b;
             --bg-light: #ffffff;
         }
@@ -20,9 +20,9 @@
             color: var(--text-black);
         }
 
-        /* Header עיצוב לפי הדרישות החדשות */
         header {
             display: flex;
+            flex-direction: row-reverse; /* הופך את הסדר הפנימי כדי שהלוגו יהיה בשמאל */
             justify-content: space-between;
             align-items: center;
             padding: 1rem 4%;
@@ -37,58 +37,57 @@
         .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             text-decoration: none;
+            flex-direction: row; /* מבטיח שהלוגו יהיה משמאל לכיתוב */
         }
 
         .header-left img {
-            height: 45px;
+            height: 40px;
             width: auto;
         }
 
         .brand-text {
             font-size: 1.6rem;
             font-weight: 700;
-            color: black; /* ברירת מחדל לשאר האותיות */
+            color: black;
             letter-spacing: -0.5px;
+            font-family: sans-serif; /* שם המותג באנגלית נראה טוב יותר בפונט כזה */
         }
 
         .brand-text span.w { color: var(--logo-blue); }
         .brand-text span.a { color: var(--logo-purple); }
 
-        /* צד ימין: כפתורי כניסה */
+        /* צד ימין: כפתורים */
         .header-right {
             display: flex;
             gap: 12px;
-            align-items: center;
         }
 
         .btn {
-            padding: 8px 18px;
-            border-radius: 20px;
+            padding: 10px 22px;
+            border-radius: 25px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.95rem;
-            transition: all 0.2s;
-        }
-
-        .btn-teacher {
-            background-color: #f1f5f9;
-            color: var(--text-black);
-        }
-
-        .btn-student {
-            background: linear-gradient(135deg, var(--logo-purple), var(--logo-blue));
+            transition: opacity 0.2s;
             color: white;
-            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.2);
         }
 
-        .btn-student:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(168, 85, 247, 0.3);
+        .btn:hover {
+            opacity: 0.9;
         }
 
-        /* גריד הספרים */
+        /* רקע כחול מוחלט לכניסת מורים */
+        .btn-teacher {
+            background-color: var(--logo-blue);
+        }
+
+        /* רקע סגול מוחלט לכניסת תלמידים */
+        .btn-student {
+            background-color: var(--logo-purple);
+        }
+
         .container {
             max-width: 1100px;
             margin: 4rem auto;
@@ -133,12 +132,12 @@
 
         .book-title {
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             margin: 10px 0 5px 0;
         }
 
         .book-grade {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: #64748b;
         }
 
@@ -149,12 +148,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 200px;
         }
 
         @media (max-width: 768px) {
-            header { padding: 1rem 15px; }
-            .brand-text { display: none; } /* בטלפון נשאיר רק לוגו כדי לחסוך מקום */
+            header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            .header-left { align-self: center; }
+            .header-right { width: 100%; justify-content: center; }
             .books-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
@@ -162,21 +161,21 @@
 <body>
 
     <header>
+        <div class="header-right">
+            <a href="#" class="btn btn-teacher">כניסת מורים</a>
+            <a href="#" class="btn btn-student">כניסת תלמידים</a>
+        </div>
+
         <a href="#" class="header-left">
             <img src="Logo.svg" alt="Word Academy">
             <div class="brand-text">
                 <span class="w">W</span>ord <span class="a">A</span>cademy
             </div>
         </a>
-
-        <div class="header-right">
-            <a href="#" class="btn btn-teacher">כניסת מורים</a>
-            <a href="#" class="btn btn-student">כניסת תלמידים</a>
-        </div>
     </header>
 
     <div class="container">
-        <h2 class="section-title">בחר ספר לימוד</h2>
+        <h2 class="section-title">בחרו ספר לימוד</h2>
         
         <div class="books-grid">
             <div class="book-card">
@@ -205,7 +204,7 @@
 
             <div class="book-card add-book-card">
                 <span style="font-size: 2rem; color: #94a3b8;">+</span>
-                <div class="book-title" style="color: #94a3b8;">הוסף ספר משלך</div>
+                <div class="book-title" style="color: #94a3b8;">הוסיפו ספר משלכן/ם</div>
                 <div class="book-grade">או בקשו מאיתנו</div>
             </div>
         </div>
