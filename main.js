@@ -7,22 +7,16 @@ const bookSettings = {
     'Think About It': { color: '#97dee4', grade: "כיתה ו'" }
 };
 
-async function loadData() {
-    // בדיקה שהאלמנט קיים לפני שמתחילים
-    const grid = document.getElementById('books-grid');
-    if (!grid) {
-        console.error("CRITICAL ERROR: Element #books-grid not found in HTML!");
-        return;
-    }
-
+async function initLibrary() {
+    const container = document.getElementById('books-grid'); // וודא שה-ID תואם ל-HTML
     try {
         const response = await fetch(SHEET_URL);
         const csvText = await response.text();
         const rawData = parseCSV(csvText);
         const structuredData = organizeData(rawData);
-        renderLibrary(structuredData, grid);
+        renderLibrary(structuredData, container);
     } catch (err) {
-        grid.innerHTML = `<p class="col-span-full text-center text-red-500">שגיאה בטעינת המידע מהשיטס.</p>`;
+        if (container) container.innerHTML = "שגיאה בטעינת הנתונים.";
     }
 }
 
@@ -54,24 +48,27 @@ function organizeData(data) {
     return books;
 }
 
-function renderLibrary(books, grid) {
-    grid.innerHTML = '';
+function renderLibrary(books, container) {
+    if (!container) return;
+    container.innerHTML = '';
 
     Object.values(books).forEach(book => {
         const config = bookSettings[book.name] || { color: '#cbd5e1' };
         
         let chaptersHTML = '';
         Object.entries(book.chapters).forEach(([chapterName, units]) => {
+            // כאן השינוי: הכותרת היא div עם onclick, לא קישור <a>
             chaptersHTML += `
-                <div class="chapter-section">
-                    <div class="chapter-header" onclick="this.parentElement.classList.toggle('open')">
-                        <span class="text-slate-700">${chapterName}</span>
-                        <span class="chevron text-slate-400">▼</span>
+                <div class="chapter-wrapper border-b border-slate-100 last:border-0">
+                    <div class="chapter-header p-4 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors" 
+                         onclick="this.parentElement.classList.toggle('open')">
+                        <span class="font-bold text-slate-700">${chapterName}</span>
+                        <span class="chevron text-[0.6rem] text-slate-400 transition-transform duration-300">▼</span>
                     </div>
-                    <div class="units-list">
+                    <div class="units-list max-height-0 overflow-hidden transition-all duration-300 bg-slate-50">
                         ${units.map(u => `
-                            <a href="${u.link}" target="_blank" class="block p-3 px-6 text-sm text-blue-600 hover:bg-blue-50 no-underline border-t border-white">
-                                📖 ${u.unitName}
+                            <a href="${u.link}" target="_blank" class="block p-3 px-8 text-sm text-blue-600 hover:bg-blue-100 no-underline border-t border-white">
+                                🎮 ${u.unitName}
                             </a>
                         `).join('')}
                     </div>
@@ -79,13 +76,13 @@ function renderLibrary(books, grid) {
             `;
         });
 
-        grid.innerHTML += `
-            <div class="book-card" style="border-color: ${config.color}">
-                <div class="p-6 text-center bg-white border-b border-slate-100">
+        container.innerHTML += `
+            <div class="book-card bg-white rounded-[2.5rem] shadow-xl overflow-hidden border-t-[12px]" style="border-color: ${config.color}">
+                <div class="p-6 text-center border-b border-slate-100">
                     <h3 class="text-2xl font-black text-slate-800">${book.name}</h3>
                     <p class="text-slate-400 font-bold text-sm">${book.grade}</p>
                 </div>
-                <div class="bg-white">
+                <div>
                     ${chaptersHTML}
                 </div>
             </div>
@@ -93,5 +90,13 @@ function renderLibrary(books, grid) {
     });
 }
 
-// הפעלה בטוחה: רק אחרי שה-HTML נטען לגמרי
-document.addEventListener('DOMContentLoaded', loadData);
+// הוספת ה-CSS הנדרש לאפקט הפתיחה דרך ה-JS כדי לחסוך לך עריכת קבצים
+const style = document.createElement('style');
+style.innerHTML = `
+    .units-list { max-height: 0; }
+    .chapter-wrapper.open .units-list { max-height: 500px; }
+    .chapter-wrapper.open .chevron { transform: rotate(180deg); }
+`;
+document.head.appendChild(style);
+
+document.addEventListener('DOMContentLoaded', initLibrary);
