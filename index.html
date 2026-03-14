@@ -3,119 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy</title>
+    <title>Word Adventure | מרכז למידה</title>
+    <link rel="icon" type="image/png" href="WA-icon.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; }
-        
-        /* Header & Titles */
-        header { padding: 2rem 5%; background: transparent; direction: ltr; }
-        .brand-section { display: flex; align-items: center; gap: 15px; }
-        .brand-title { font-size: 2.5rem; font-weight: 800; color: #facc15; margin: 0; }
-        .sub-title { font-size: 1.1rem; color: #64748b; font-weight: 600; margin-top: -5px; display: flex; align-items: center; gap: 5px; }
-
-        /* Grid Layout */
-        .books-container { 
-            display: grid; 
-            grid-template-cols: repeat(1, 1fr); 
-            gap: 2rem; 
-            padding: 0 5% 5rem;
-        }
-        @media (min-width: 1024px) {
-            .books-container { grid-template-cols: repeat(3, 1fr); } /* 3 טורים במחשב */
-        }
-
-        /* Card Design */
-        .book-card {
-            background: white;
-            border-radius: 2.5rem;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            height: fit-content;
-        }
-
-        .book-header {
-            padding: 1.25rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-        }
-        .grade-badge {
-            background: rgba(255, 255, 255, 0.25);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 800;
-        }
-
-        /* Dropdown/Accordion Logic */
-        .chapter-row { border-bottom: 1px solid #f1f5f9; }
-        .chapter-btn {
-            width: 100%;
-            padding: 1.25rem 2rem;
-            display: flex;
-            justify-content: space-between; /* טקסט בשמאל, חץ בימין */
-            align-items: center;
-            cursor: pointer;
-            transition: background 0.2s;
-            direction: ltr; /* יישור לשמאל */
-        }
-        .chapter-btn:hover { background: #fcfcfc; }
-        .chapter-title { font-weight: 800; font-size: 0.9rem; color: #475569; letter-spacing: 0.5px; }
-        
-        .chevron { 
-            transition: transform 0.3s; 
-            font-size: 0.8rem; 
-            color: #cbd5e1;
-        }
-
-        /* State: Open */
-        .chapter-row.is-open .chevron { transform: rotate(180deg); }
-        .chapter-row.is-open .units-list { max-height: 1000px; padding-bottom: 1rem; }
-
-        .units-list {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #fff;
-            direction: ltr; /* יחידות מיושרות לשמאל */
-        }
-
-        .unit-link {
-            display: block;
-            padding: 0.7rem 2.5rem;
-            font-size: 0.9rem;
-            color: #94a3b8;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .unit-link:hover { color: #0f172a; background: #f8fafc; padding-left: 3rem; }
-
-        .nav-buttons { direction: rtl; display: flex; gap: 1rem; }
+        body { font-family: 'Assistant', sans-serif; }
+        .border-sky-500 { border-color: #0ea5e9; } .bg-sky-50 { background-color: #f0f9ff; } .text-sky-900 { color: #0c4a6e; } .hover\:bg-sky-100:hover { background-color: #e0f2fe; }
+        .border-amber-500 { border-color: #f59e0b; } .bg-amber-50 { background-color: #fffbeb; } .text-amber-900 { color: #78350f; } .hover\:bg-amber-100:hover { background-color: #fef3c7; }
+        .border-violet-500 { border-color: #8b5cf6; } .bg-violet-50 { background-color: #f5f3ff; } .text-violet-900 { color: #4c1d95; } .hover\:bg-violet-100:hover { background-color: #ede9fe; }
+        .border-emerald-500 { border-color: #10b981; } .bg-emerald-50 { background-color: #ecfdf5; } .text-emerald-900 { color: #064e3b; } .hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
+<body class="p-4 sm:p-8 bg-slate-50 min-h-screen">
 
-    <header class="flex justify-between items-start">
-        <div class="brand-section">
-            <img src="Logo.svg" alt="WA" class="h-16">
-            <div>
-                <h1 class="brand-title">Word Academy</h1>
-                <div class="sub-title">🦉 תרגול אוצר מילים בכיף</div>
-            </div>
-        </div>
-        
-        <div class="nav-buttons mt-4">
-            <button class="text-slate-500 font-bold hover:text-slate-800 transition">כניסת מורים</button>
-            <button class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:scale-105 transition">כניסת תלמידים</button>
-        </div>
+    <header class="text-center mb-10 animate-fade-in">
+        <img src="logo_inner.png" alt="Logo" class="w-32 mx-auto mb-4 drop-shadow-md">
+        <h1 class="text-4xl font-black text-blue-600">Word Adventure</h1>
+        <p class="text-gray-500 font-bold mt-2 text-lg">תרגול אוצר מילים בכיף 🚀</p>
     </header>
 
-    <main class="books-container" id="books-grid">
-        </main>
+    <div id="loading" class="text-center font-bold text-blue-500 animate-pulse py-10">מתחבר לענן המילים...</div>
+    <div id="content" class="max-w-4xl mx-auto space-y-8 pb-10"></div>
 
-    <script src="main.js"></script>
+    <script>
+        const SHEET_ID = '1HJ1UDVuzqvWS66hprx8dSFqqoS0OVvZFGOGaRtyDPu8'; 
+        const SHEET_NAME = 'Sheet1'; 
+
+        async function loadData() {
+            try {
+                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+                const response = await fetch(url);
+                const text = await response.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                const rows = json.table.rows;
+
+                // כאן הוספתי את הסינון (filter) שמתעלם משורת הכותרת
+                const data = rows
+                    .map(r => ({
+                        book: r.c[0]?.v,
+                        grade: r.c[1]?.v,
+                        chapter: r.c[2]?.v,
+                        unit: r.c[3]?.v,
+                        link: r.c[4]?.v,
+                        color: r.c[5]?.v || 'blue'
+                    }))
+                    .filter(item => item.book && item.book !== 'Book' && item.link); // מסנן כותרות ושורות ריקות
+
+                renderBooks(data);
+                document.getElementById('loading').style.display = 'none';
+            } catch (e) {
+                document.getElementById('loading').innerHTML = `<div class="text-red-500">שגיאה בטעינה. וודא שהגיליון שותף.</div>`;
+            }
+        }
+
+        function renderBooks(data) {
+            const content = document.getElementById('content');
+            content.innerHTML = ''; // ניקוי התוכן לפני רינדור מחדש
+            
+            const books = [...new Set(data.map(d => d.book))];
+
+            books.forEach(bookTitle => {
+                const bookData = data.filter(d => d.book === bookTitle);
+                const color = bookData[0].color; 
+                
+                let bookHtml = `
+                    <div class="bg-white rounded-[2.5rem] shadow-xl border-t-8 border-${color}-500 overflow-hidden mb-8 animate-fade-in">
+                        <div class="p-6 bg-${color}-50 flex justify-between items-center border-b border-slate-100">
+                            <h2 class="text-3xl font-black text-${color}-900">${bookTitle}</h2>
+                            <span class="bg-${color}-500 text-white px-6 py-1 rounded-full text-sm font-black shadow-sm">${bookData[0].grade}</span>
+                        </div>
+                        <div class="p-6 space-y-6">`;
+
+                const chapters = [...new Set(bookData.map(d => d.chapter))];
+                chapters.forEach(ch => {
+                    bookHtml += `
+                        <div>
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="h-2 w-2 rounded-full bg-${color}-400"></div>
+                                <h3 class="font-extrabold text-slate-400 uppercase tracking-wider text-xs">${ch || 'כללי'}</h3>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">`;
+                    
+                    const units = bookData.filter(d => d.chapter === ch);
+                    units.forEach(u => {
+                        const fullUrl = `app/index.html?w=${u.link}`;
+                        bookHtml += `
+                            <a href="${fullUrl}" target="_blank" class="flex justify-between items-center p-4 bg-slate-50 hover:bg-${color}-100 rounded-2xl transition-all group border border-transparent hover:border-${color}-200">
+                                <span class="font-bold text-slate-700 group-hover:text-${color}-900 text-right">${u.unit}</span>
+                                <div class="bg-white p-2 rounded-lg shadow-sm group-hover:shadow-md transition-all">
+                                    <span class="text-xl">🎮</span>
+                                </div>
+                            </a>`;
+                    });
+                    bookHtml += `</div></div>`;
+                });
+                bookHtml += `</div></div>`;
+                content.innerHTML += bookHtml;
+            });
+        }
+        loadData();
+    </script>
 </body>
 </html>
