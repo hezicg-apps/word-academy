@@ -3,89 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | מרכז למידה</title>
+    <title>Word Academy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Assistant', sans-serif; background-color: #f1f5f9; margin: 0; }
+        :root { --main-blue: #4d79ff; }
+        body { font-family: 'Assistant', sans-serif; background-color: #f1f5f9; margin: 0; overflow-x: hidden; }
         
-        /* שלוש עמודות קשיחות במחשב */
-        .library-grid {
-            display: grid;
-            grid-template-cols: 1fr;
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        @media (min-width: 1024px) {
-            .library-grid { grid-template-cols: repeat(3, 1fr); }
-        }
-
-        /* כרטיסייה */
-        .book-card {
-            background: white;
-            border-radius: 2.5rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            height: fit-content;
-        }
-
-        /* כפתור פרק - אנגלית (שמאל) והחץ בימין */
-        .chapter-btn {
+        /* תיקון ה-Header */
+        .main-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
-            padding: 1.25rem 1.5rem;
-            cursor: pointer;
-            direction: ltr; /* יישור לשמאל */
-            border-bottom: 1px solid #f1f5f9;
+            padding: 1.5rem 5%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            direction: ltr; /* לוגו בשמאל, כפתורים בימין */
         }
-        .chapter-title { font-weight: 800; color: #475569; font-size: 0.9rem; }
-        .chevron { transition: transform 0.3s; color: #cbd5e1; }
 
-        /* רשימת יחידות */
+        /* כפיית 3 טורים במחשב */
+        .library-grid {
+            display: grid !important;
+            grid-template-cols: repeat(3, 1fr) !important;
+            gap: 25px !important;
+            max-width: 1300px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .library-grid { grid-template-cols: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 768px) {
+            .library-grid { grid-template-cols: 1fr !important; }
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            border-top: 12px solid var(--main-blue);
+            transition: transform 0.3s ease;
+            height: fit-content;
+        }
+
+        /* כותרת ספר מיושרת לימין (עברית) */
+        .book-header {
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            direction: rtl;
+        }
+
+        /* רשימת פרקים - אנגלית (שמאל) */
+        .chapter-row { border-top: 1px solid #f8fafc; }
+        .chapter-btn {
+            width: 100%;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            direction: ltr; /* טקסט בשמאל, חץ בימין */
+        }
+        .chapter-btn:hover { background: #fcfdfe; }
+        .chapter-title { font-weight: 800; color: #475569; font-size: 0.95rem; }
+        
+        .chevron { color: #cbd5e1; transition: 0.3s; font-size: 0.8rem; }
+        .is-open .chevron { transform: rotate(180deg); color: var(--main-blue); }
+
         .units-list { 
             max-height: 0; 
             overflow: hidden; 
-            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1); 
-            background: #f8fafc; 
+            transition: all 0.4s ease-in-out; 
+            background: #f8fafc;
         }
-        .is-open .units-list { max-height: 1000px; transition: max-height 0.4s ease-in; }
-        .is-open .chevron { transform: rotate(180deg); }
+        .is-open .units-list { max-height: 800px; padding-bottom: 10px; }
 
         .unit-link {
             display: block;
-            padding: 0.75rem 2.5rem;
+            padding: 12px 35px;
             color: #64748b;
             text-decoration: none;
             font-weight: 700;
             font-size: 0.9rem;
-            direction: ltr;
             text-align: left;
+            direction: ltr;
         }
-        .unit-link:hover { background: white; color: #1e293b; }
+        .unit-link:hover { color: var(--main-blue); background: white; }
     </style>
 </head>
 <body>
 
-    <header class="p-8 flex justify-between items-center max-w-7xl mx-auto" style="direction: ltr;">
+    <header class="main-header">
         <div class="flex items-center gap-4">
-            <img src="Logo.svg" alt="Logo" class="w-16 h-16">
-            <div style="direction: rtl; text-align: right;">
-                <h1 class="text-4xl font-black text-blue-600 leading-none" style="color: #4d79ff;">Word Academy</h1>
-                <p class="text-gray-400 font-bold mt-1">🦉 תרגול אוצר מילים בכיף</p>
+            <img src="Logo.svg" alt="Logo" class="w-14 h-14">
+            <div style="direction: rtl;">
+                <h1 class="text-2xl font-black text-blue-600 leading-none">Word Academy</h1>
+                <p class="text-gray-400 text-xs font-bold">🦉 תרגול אוצר מילים בכיף</p>
             </div>
         </div>
-        <div class="flex gap-4" style="direction: rtl;">
-            <button class="text-slate-500 font-bold hover:text-blue-600 transition">כניסת מורים</button>
-            <button class="bg-[#4d79ff] text-white px-6 py-2 rounded-full font-bold shadow-lg hover:scale-105 transition">כניסת תלמידים</button>
+        <div class="flex items-center gap-3">
+            <button class="bg-blue-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-md">כניסת תלמידים</button>
+            <button class="text-gray-400 font-bold text-sm px-2">כניסת מורים</button>
         </div>
     </header>
 
-    <div id="loading" class="text-center py-20 font-bold text-blue-400 animate-pulse text-xl">טוען את הספרייה...</div>
-    <main id="library-content" class="library-grid"></main>
+    <main id="library-content" class="library-grid">
+        </main>
 
     <script>
         const SHEET_ID = '1HJ1UDVuzqvWS66hprx8dSFqqoS0OVvZFGOGaRtyDPu8';
@@ -103,14 +129,11 @@
                     chapter: r.c[2]?.v,
                     unit: r.c[3]?.v,
                     link: r.c[4]?.v,
-                    color: r.c[5]?.v // עמודה F
+                    color: r.c[5]?.v
                 })).filter(i => i.book && i.book !== 'Book');
 
                 render(data);
-                document.getElementById('loading').style.display = 'none';
-            } catch (e) {
-                document.getElementById('loading').innerText = "שגיאה בחיבור לגוגל שיטס";
-            }
+            } catch (e) { console.error("Error loading sheet:", e); }
         }
 
         function render(data) {
@@ -119,23 +142,21 @@
 
             books.forEach(bookName => {
                 const bookData = data.filter(d => d.book === bookName);
-                // שימוש בצבע מהשיטס או כחול ברירת מחדל
-                const bookColor = bookData[0].color || '#4d79ff';
+                const color = bookData[0].color || '#4d79ff';
                 
                 let html = `
-                    <div class="book-card border-t-[10px]" style="border-color: ${bookColor}">
-                        <div class="p-6 border-b border-slate-50 flex justify-between items-center">
-                            <h2 class="text-2xl font-black text-slate-800">${bookName}</h2>
-                            <span class="text-xs font-black px-4 py-1 rounded-full text-white" style="background: ${bookColor}">${bookData[0].grade}</span>
-                        </div>
-                        <div class="chapters-container">`;
+                    <div class="book-card" style="border-top-color: ${color}">
+                        <div class="book-header">
+                            <h2 class="text-xl font-black text-slate-800">${bookName}</h2>
+                            <span class="text-[10px] font-black px-3 py-1 rounded-full text-white" style="background: ${color}">${bookData[0].grade}</span>
+                        </div>`;
 
                 const chapters = [...new Set(bookData.map(d => d.chapter))];
                 chapters.forEach(ch => {
                     const units = bookData.filter(u => u.chapter === ch);
                     html += `
                         <div class="chapter-row">
-                            <div class="chapter-btn" onclick="toggleChapter(this)">
+                            <div class="chapter-btn" onclick="this.parentElement.classList.toggle('is-open')">
                                 <span class="chapter-title">${ch ? ch.toUpperCase() : 'GENERAL'}</span>
                                 <span class="chevron">▼</span>
                             </div>
@@ -144,25 +165,10 @@
                             </div>
                         </div>`;
                 });
-
-                html += `</div></div>`;
+                html += `</div>`;
                 container.innerHTML += html;
             });
         }
-
-        function toggleChapter(btn) {
-            const row = btn.parentElement;
-            const isOpen = row.classList.contains('is-open');
-            
-            // סגירת פרקים אחרים באותו ספר (אופציונלי)
-            const parent = row.parentElement;
-            parent.querySelectorAll('.chapter-row').forEach(r => r.classList.remove('is-open'));
-
-            if (!isOpen) {
-                row.classList.add('is-open');
-            }
-        }
-
         loadData();
     </script>
 </body>
