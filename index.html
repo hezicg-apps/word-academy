@@ -7,169 +7,167 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --main-blue: #4d79ff; }
-        body { font-family: 'Assistant', sans-serif; background-color: #f1f5f9; margin: 0; overflow-x: hidden; }
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; padding-bottom: 50px; }
         
-        /* תיקון ה-Header */
-        .main-header {
+        /* Header Fix - מונע הצפה של כפתורים */
+        .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 5%;
+            padding: 1rem 5%;
             background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            direction: ltr; /* לוגו בשמאל, כפתורים בימין */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        /* כפיית 3 טורים במחשב */
-        .library-grid {
+        /* הגדרת 3 טורים קבועה במחשב */
+        .main-container {
             display: grid !important;
             grid-template-cols: repeat(3, 1fr) !important;
             gap: 25px !important;
-            max-width: 1300px;
+            max-width: 1200px;
             margin: 40px auto;
             padding: 0 20px;
         }
 
-        @media (max-width: 1024px) {
-            .library-grid { grid-template-cols: repeat(2, 1fr) !important; }
-        }
-        @media (max-width: 768px) {
-            .library-grid { grid-template-cols: 1fr !important; }
-        }
+        /* התאמה לטאבלט ולנייד */
+        @media (max-width: 1024px) { .main-container { grid-template-cols: repeat(2, 1fr) !important; } }
+        @media (max-width: 700px) { .main-container { grid-template-cols: 1fr !important; } }
 
+        /* כרטיסיית ספר */
         .book-card {
             background: white;
-            border-radius: 2.5rem;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            border-top: 12px solid var(--main-blue);
-            transition: transform 0.3s ease;
+            border-radius: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border-top: 10px solid #4d79ff;
             height: fit-content;
         }
 
-        /* כותרת ספר מיושרת לימין (עברית) */
-        .book-header {
-            padding: 25px;
+        .book-title-area {
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            direction: rtl;
+            background: #fff;
         }
 
-        /* רשימת פרקים - אנגלית (שמאל) */
-        .chapter-row { border-top: 1px solid #f8fafc; }
-        .chapter-btn {
+        /* רשימת פרקים - יישור לשמאל עבור אנגלית */
+        .chapter-box { border-top: 1px solid #f1f5f9; }
+        .chapter-header {
             width: 100%;
-            padding: 18px 25px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
             direction: ltr; /* טקסט בשמאל, חץ בימין */
         }
-        .chapter-btn:hover { background: #fcfdfe; }
-        .chapter-title { font-weight: 800; color: #475569; font-size: 0.95rem; }
+        .chapter-header:hover { background: #f8fafc; }
         
-        .chevron { color: #cbd5e1; transition: 0.3s; font-size: 0.8rem; }
-        .is-open .chevron { transform: rotate(180deg); color: var(--main-blue); }
-
         .units-list { 
             max-height: 0; 
             overflow: hidden; 
-            transition: all 0.4s ease-in-out; 
-            background: #f8fafc;
+            transition: 0.3s ease-in-out; 
+            background: #fbfcfd;
         }
-        .is-open .units-list { max-height: 800px; padding-bottom: 10px; }
+        .is-open .units-list { max-height: 1000px; }
+        .is-open .chevron { transform: rotate(180deg); color: #4d79ff; }
 
-        .unit-link {
+        .unit-btn {
             display: block;
-            padding: 12px 35px;
+            padding: 10px 30px;
             color: #64748b;
             text-decoration: none;
             font-weight: 700;
-            font-size: 0.9rem;
             text-align: left;
             direction: ltr;
         }
-        .unit-link:hover { color: var(--main-blue); background: white; }
+        .unit-btn:hover { background: white; color: #4d79ff; }
+        
+        .chevron { transition: 0.3s; color: #cbd5e1; }
     </style>
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="flex items-center gap-4">
-            <img src="Logo.svg" alt="Logo" class="w-14 h-14">
-            <div style="direction: rtl;">
-                <h1 class="text-2xl font-black text-blue-600 leading-none">Word Academy</h1>
-                <p class="text-gray-400 text-xs font-bold">🦉 תרגול אוצר מילים בכיף</p>
+    <nav class="top-nav">
+        <div class="flex items-center gap-4" style="direction: ltr;">
+            <img src="Logo.svg" alt="WA" class="w-12 h-12">
+            <div style="direction: rtl; text-align: right;">
+                <h1 class="text-xl font-black text-blue-600 leading-tight">Word Academy</h1>
+                <p class="text-[10px] text-gray-400 font-bold">תרגול אוצר מילים בכיף 🦉</p>
             </div>
         </div>
-        <div class="flex items-center gap-3">
-            <button class="bg-blue-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-md">כניסת תלמידים</button>
-            <button class="text-gray-400 font-bold text-sm px-2">כניסת מורים</button>
+        <div class="flex items-center gap-4">
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg">כניסת תלמידים</button>
+            <button class="text-gray-400 font-bold text-xs">כניסת מורים</button>
         </div>
-    </header>
+    </nav>
 
-    <main id="library-content" class="library-grid">
-        </main>
+    <div id="loader" class="text-center mt-20 font-bold text-blue-300 animate-pulse">מתחבר למאגר הספרים...</div>
+    <div id="books-grid" class="main-container"></div>
 
     <script>
-        const SHEET_ID = '1HJ1UDVuzqvWS66hprx8dSFqqoS0OVvZFGOGaRtyDPu8';
-        
-        async function loadData() {
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1HJ1UDVuzqvWS66hprx8dSFqqoS0OVvZFGOGaRtyDPu8/gviz/tq?tqx=out:json';
+
+        async function fetchBooks() {
             try {
-                const response = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
-                const text = await response.text();
+                const r = await fetch(SHEET_URL);
+                const text = await r.text();
                 const json = JSON.parse(text.substr(47).slice(0, -2));
-                const rows = json.table.rows;
+                const data = json.table.rows.map(row => ({
+                    name: row.c[0]?.v,
+                    grade: row.c[1]?.v,
+                    chap: row.c[2]?.v,
+                    unit: row.c[3]?.v,
+                    link: row.c[4]?.v,
+                    color: row.c[5]?.v
+                })).filter(i => i.name && i.name !== 'Book');
 
-                const data = rows.map(r => ({
-                    book: r.c[0]?.v,
-                    grade: r.c[1]?.v,
-                    chapter: r.c[2]?.v,
-                    unit: r.c[3]?.v,
-                    link: r.c[4]?.v,
-                    color: r.c[5]?.v
-                })).filter(i => i.book && i.book !== 'Book');
-
+                document.getElementById('loader').remove();
                 render(data);
-            } catch (e) { console.error("Error loading sheet:", e); }
+            } catch (e) {
+                document.getElementById('loader').innerText = "שגיאה בטעינת הנתונים";
+            }
         }
 
         function render(data) {
-            const container = document.getElementById('library-content');
-            const books = [...new Set(data.map(d => d.book))];
+            const grid = document.getElementById('books-grid');
+            const uniqueBooks = [...new Set(data.map(d => d.name))];
 
-            books.forEach(bookName => {
-                const bookData = data.filter(d => d.book === bookName);
-                const color = bookData[0].color || '#4d79ff';
+            uniqueBooks.forEach(bName => {
+                const bData = data.filter(d => d.name === bName);
+                const bColor = bData[0].color || '#4d79ff';
                 
-                let html = `
-                    <div class="book-card" style="border-top-color: ${color}">
-                        <div class="book-header">
-                            <h2 class="text-xl font-black text-slate-800">${bookName}</h2>
-                            <span class="text-[10px] font-black px-3 py-1 rounded-full text-white" style="background: ${color}">${bookData[0].grade}</span>
+                let bHtml = `
+                    <div class="book-card" style="border-top-color: ${bColor}">
+                        <div class="book-title-area">
+                            <h2 class="text-xl font-extrabold text-slate-800">${bName}</h2>
+                            <span class="text-[10px] font-black px-3 py-1 rounded-full text-white" style="background: ${bColor}">${bData[0].grade}</span>
                         </div>`;
 
-                const chapters = [...new Set(bookData.map(d => d.chapter))];
-                chapters.forEach(ch => {
-                    const units = bookData.filter(u => u.chapter === ch);
-                    html += `
-                        <div class="chapter-row">
-                            <div class="chapter-btn" onclick="this.parentElement.classList.toggle('is-open')">
-                                <span class="chapter-title">${ch ? ch.toUpperCase() : 'GENERAL'}</span>
+                const chapters = [...new Set(bData.map(d => d.chap))];
+                chapters.forEach(cName => {
+                    const units = bData.filter(u => u.chap === cName);
+                    bHtml += `
+                        <div class="chapter-box">
+                            <div class="chapter-header" onclick="this.parentElement.classList.toggle('is-open')">
+                                <span class="font-bold text-slate-500 text-sm">${cName ? cName.toUpperCase() : 'UNIT'}</span>
                                 <span class="chevron">▼</span>
                             </div>
                             <div class="units-list">
-                                ${units.map(u => `<a href="app/index.html?w=${u.link}" target="_blank" class="unit-link">${u.unit}</a>`).join('')}
+                                ${units.map(u => `<a href="app/index.html?w=${u.link}" target="_blank" class="unit-btn">${u.unit}</a>`).join('')}
                             </div>
                         </div>`;
                 });
-                html += `</div>`;
-                container.innerHTML += html;
+                bHtml += `</div>`;
+                grid.innerHTML += bHtml;
             });
         }
-        loadData();
+        fetchBooks();
     </script>
 </body>
 </html>
+
