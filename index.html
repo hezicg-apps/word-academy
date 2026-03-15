@@ -3,171 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy</title>
+    <title>Word Academy | Library</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; padding-bottom: 50px; }
-        
-        /* Header Fix - מונע הצפה של כפתורים */
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 5%;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        /* הגדרת 3 טורים קבועה במחשב */
-        .main-container {
-            display: grid !important;
-            grid-template-cols: repeat(3, 1fr) !important;
-            gap: 25px !important;
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        /* התאמה לטאבלט ולנייד */
-        @media (max-width: 1024px) { .main-container { grid-template-cols: repeat(2, 1fr) !important; } }
-        @media (max-width: 700px) { .main-container { grid-template-cols: 1fr !important; } }
-
-        /* כרטיסיית ספר */
-        .book-card {
-            background: white;
-            border-radius: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            overflow: hidden;
-            border-top: 10px solid #4d79ff;
-            height: fit-content;
-        }
-
-        .book-title-area {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-        }
-
-        /* רשימת פרקים - יישור לשמאל עבור אנגלית */
-        .chapter-box { border-top: 1px solid #f1f5f9; }
-        .chapter-header {
-            width: 100%;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            direction: ltr; /* טקסט בשמאל, חץ בימין */
-        }
-        .chapter-header:hover { background: #f8fafc; }
-        
-        .units-list { 
-            max-height: 0; 
-            overflow: hidden; 
-            transition: 0.3s ease-in-out; 
-            background: #fbfcfd;
-        }
-        .is-open .units-list { max-height: 1000px; }
-        .is-open .chevron { transform: rotate(180deg); color: #4d79ff; }
-
-        .unit-btn {
-            display: block;
-            padding: 10px 30px;
-            color: #64748b;
-            text-decoration: none;
-            font-weight: 700;
-            text-align: left;
-            direction: ltr;
-        }
-        .unit-btn:hover { background: white; color: #4d79ff; }
-        
-        .chevron { transition: 0.3s; color: #cbd5e1; }
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
+        body { font-family: 'Assistant', sans-serif; background-color: #f3f4f6; }
+        .ltr-content { direction: ltr; text-align: left; }
+        /* Accordion Logic */
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0, 1, 0, 1); }
+        .accordion-open .accordion-content { max-height: 1000px; transition: max-height 0.4s ease-in; }
+        .chevron { transition: transform 0.3s ease; }
+        .accordion-open .chevron { transform: rotate(180deg); }
     </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-    <nav class="top-nav">
-        <div class="flex items-center gap-4" style="direction: ltr;">
-            <img src="Logo.svg" alt="WA" class="w-12 h-12">
-            <div style="direction: rtl; text-align: right;">
-                <h1 class="text-xl font-black text-blue-600 leading-tight">Word Academy</h1>
-                <p class="text-[10px] text-gray-400 font-bold">תרגול אוצר מילים בכיף 🦉</p>
-            </div>
-        </div>
+    <header class="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-4">
-            <button class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg">כניסת תלמידים</button>
-            <button class="text-gray-400 font-bold text-xs">כניסת מורים</button>
+            <img src="logo.svg" alt="Word Academy Logo" class="w-12 h-12">
+            <h1 class="text-2xl font-black text-blue-900">Word Academy</h1>
         </div>
-    </nav>
+        <div class="flex gap-3">
+            <button onclick="showLoginModal('teacher')" class="px-5 py-2 border-2 border-blue-600 text-blue-600 font-bold rounded-full hover:bg-blue-50 transition text-sm md:text-base">כניסת מורים</button>
+            <button onclick="showLoginModal('student')" class="px-5 py-2 bg-blue-600 text-white font-bold rounded-full shadow-lg hover:bg-blue-700 transition text-sm md:text-base">כניסת תלמידים</button>
+        </div>
+    </header>
 
-    <div id="loader" class="text-center mt-20 font-bold text-blue-300 animate-pulse">מתחבר למאגר הספרים...</div>
-    <div id="books-grid" class="main-container"></div>
+    <main class="max-w-7xl mx-auto p-6 md:p-12">
+        <div id="library-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <p class="text-center col-span-full text-slate-500 animate-pulse">טוען את הספרייה...</p>
+        </div>
+    </main>
 
     <script>
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1HJ1UDVuzqvWS66hprx8dSFqqoS0OVvZFGOGaRtyDPu8/gviz/tq?tqx=out:json';
+        // המרת הקישור ששלחת לפורמט CSV לצורך משיכת נתונים
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
-        async function fetchBooks() {
+        async function initLibrary() {
             try {
-                const r = await fetch(SHEET_URL);
-                const text = await r.text();
-                const json = JSON.parse(text.substr(47).slice(0, -2));
-                const data = json.table.rows.map(row => ({
-                    name: row.c[0]?.v,
-                    grade: row.c[1]?.v,
-                    chap: row.c[2]?.v,
-                    unit: row.c[3]?.v,
-                    link: row.c[4]?.v,
-                    color: row.c[5]?.v
-                })).filter(i => i.name && i.name !== 'Book');
-
-                document.getElementById('loader').remove();
-                render(data);
-            } catch (e) {
-                document.getElementById('loader').innerText = "שגיאה בטעינת הנתונים";
+                const response = await fetch(CSV_URL);
+                const data = await response.text();
+                const booksData = parseCSV(data);
+                renderLibrary(booksData);
+            } catch (error) {
+                console.error("Error loading library:", error);
             }
         }
 
-        function render(data) {
-            const grid = document.getElementById('books-grid');
-            const uniqueBooks = [...new Set(data.map(d => d.name))];
+        function parseCSV(text) {
+            const lines = text.split('\n').map(line => line.split(','));
+            const books = {};
+            
+            // דילוג על כותרות (A: Book, B: Grade, C: Chapter, D: Unit, E: Link, F: Color)
+            for (let i = 1; i < lines.length; i++) {
+                const [book, grade, chapter, unit, link, color] = lines[i];
+                if (!book) continue;
 
-            uniqueBooks.forEach(bName => {
-                const bData = data.filter(d => d.name === bName);
-                const bColor = bData[0].color || '#4d79ff';
-                
-                let bHtml = `
-                    <div class="book-card" style="border-top-color: ${bColor}">
-                        <div class="book-title-area">
-                            <h2 class="text-xl font-extrabold text-slate-800">${bName}</h2>
-                            <span class="text-[10px] font-black px-3 py-1 rounded-full text-white" style="background: ${bColor}">${bData[0].grade}</span>
-                        </div>`;
+                if (!books[book]) {
+                    books[book] = { grade, color: color?.trim() || '#3b82f6', chapters: {} };
+                }
+                if (!books[book].chapters[chapter]) {
+                    books[book].chapters[chapter] = [];
+                }
+                books[book].chapters[chapter].push({ unit, link });
+            }
+            return books;
+        }
 
-                const chapters = [...new Set(bData.map(d => d.chap))];
-                chapters.forEach(cName => {
-                    const units = bData.filter(u => u.chap === cName);
-                    bHtml += `
-                        <div class="chapter-box">
-                            <div class="chapter-header" onclick="this.parentElement.classList.toggle('is-open')">
-                                <span class="font-bold text-slate-500 text-sm">${cName ? cName.toUpperCase() : 'UNIT'}</span>
-                                <span class="chevron">▼</span>
+        function renderLibrary(books) {
+            const grid = document.getElementById('library-grid');
+            grid.innerHTML = '';
+
+            Object.entries(books).forEach(([bookName, info]) => {
+                const card = document.createElement('div');
+                // עיצוב הכרטיסייה לפי דרישה: פינות מעוגלות 2.5rem, צל עמוק, גבול עליון עבה
+                card.className = "bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col hover:translate-y-[-5px] transition-all duration-300";
+                card.style.borderTop = `8px solid ${info.color}`;
+
+                let accordionHtml = '';
+                Object.entries(info.chapters).forEach(([chapter, units]) => {
+                    accordionHtml += `
+                        <div class="border-b border-slate-50 accordion-item">
+                            <button onclick="this.parentElement.classList.toggle('accordion-open')" class="w-full py-4 px-6 flex justify-between items-center hover:bg-slate-50 group">
+                                <span class="chevron text-slate-300 group-hover:text-blue-500">▼</span>
+                                <span class="ltr-content font-bold text-slate-700">${chapter}</span>
+                            </button>
+                            <div class="accordion-content bg-slate-50/50">
+                                <div class="px-6 py-2 flex flex-col gap-2 ltr-content">
+                                    ${units.map(u => `
+                                        <a href="${u.link}" target="_blank" class="py-2 text-blue-500 hover:text-blue-700 font-medium flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-300"></span>
+                                            ${u.unit}
+                                        </a>
+                                    `).join('')}
+                                </div>
                             </div>
-                            <div class="units-list">
-                                ${units.map(u => `<a href="app/index.html?w=${u.link}" target="_blank" class="unit-btn">${u.unit}</a>`).join('')}
-                            </div>
-                        </div>`;
+                        </div>
+                    `;
                 });
-                bHtml += `</div>`;
-                grid.innerHTML += bHtml;
+
+                card.innerHTML = `
+                    <div class="p-6 flex justify-between items-center bg-slate-50/30">
+                        <div class="bg-white/80 backdrop-blur px-4 py-1.5 rounded-full text-xs font-black shadow-sm border border-slate-100 uppercase tracking-wider" style="color: ${info.color}">
+                            ${info.grade}
+                        </div>
+                        <h2 class="text-xl font-extrabold text-slate-800 ltr-content">${bookName}</h2>
+                    </div>
+                    <div class="flex-grow">
+                        ${accordionHtml}
+                    </div>
+                `;
+                grid.appendChild(card);
             });
         }
-        fetchBooks();
+
+        window.onload = initLibrary;
     </script>
 </body>
 </html>
-
